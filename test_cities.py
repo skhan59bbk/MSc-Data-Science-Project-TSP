@@ -10,12 +10,14 @@ def test_compute_total_distance():
     assert compute_total_distance(road_map1)==\
            pytest.approx(9.386+18.496+10.646, 0.01)
 
-    '''add your further tests'''
+    assert type(compute_total_distance(road_map1)) == float
+
 
 def test_swap_cities():
-    '''add your tests'''
+    assert type(swap_cities(road_map1,5,12)) == tuple
+
 
 def test_shift_cities():
-    '''add your tests'''
+    assert type(shift_cities(road_map)) == list
 
 
