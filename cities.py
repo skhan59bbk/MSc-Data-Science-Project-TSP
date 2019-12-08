@@ -1,25 +1,16 @@
+import random
+
 def read_cities(file_name):
-    """
-    Read in the cities from the given `file_name`, and return 
-    them as a list of four-tuples: 
-
-      [(state, city, latitude, longitude), ...] 
-
-    Use this as your initial `road_map`, that is, the cycle 
-
-      Alabama -> Alaska -> Arizona -> ... -> Wyoming -> Alabama.
-    """
-    file_name = open("C:\\Users\\samee\\Documents\\POP1\\pop-one-project-skhan59\\city-data.txt",'r')
-    line = file_name.readline().rstrip()
+    f = open("C:\\Users\\samee\\Documents\\POP1\\pop-one-project-skhan59\\"+file_name,'r')
+    line = f.readline().rstrip()
     road_map = []
     while line:
-        words = line.split('\t')
-        #print(tuple(words))
-        road_map.append(tuple(words))
-        line = file_name.readline().rstrip()
-    file_name.close()
+        elements = line.split('\t')
+        road_map.append(tuple(elements))
+        line = f.readline().rstrip()
+    f.close()
     return road_map
-  
+
 def print_cities(road_map):
     """
     Prints a list of cities, along with their locations. 
