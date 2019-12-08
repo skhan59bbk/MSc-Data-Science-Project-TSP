@@ -9,7 +9,16 @@ def read_cities(file_name):
 
       Alabama -> Alaska -> Arizona -> ... -> Wyoming -> Alabama.
     """
-    pass
+    file_name = open("C:\\Users\\samee\\Documents\\POP1\\pop-one-project-skhan59\\city-data.txt",'r')
+    line = file_name.readline().rstrip()
+    road_map = []
+    while line:
+        words = line.split('\t')
+        #print(tuple(words))
+        road_map.append(tuple(words))
+        line = file_name.readline().rstrip()
+    file_name.close()
+    return road_map
   
 def print_cities(road_map):
     """
