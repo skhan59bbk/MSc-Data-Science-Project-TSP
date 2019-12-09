@@ -11,6 +11,9 @@ def test_compute_total_distance():
            pytest.approx(9.386+18.496+10.646, 0.01)
 
     assert type(compute_total_distance(road_map1)) is float
+    
+    assert type(road_map1) is list
+    
 
 
 def test_swap_cities():

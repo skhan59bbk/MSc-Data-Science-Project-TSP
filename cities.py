@@ -1,7 +1,7 @@
 import random
 
 def read_cities(file_name):
-    f = open("C:\\Users\\samee\\Documents\\POP1\\pop-one-project-skhan59\\"+file_name,'r')
+    f = open(file_name,'r')
     line = f.readline().rstrip()
     road_map = []
     while line:
@@ -77,3 +77,6 @@ def main():
 
 if __name__ == "__main__": #keep this in
     main()
+
+
+#print(read_cities('C:\\Users\\samee\\Documents\\POP1\\pop-one-project-skhan59\\city-data.txt'))
