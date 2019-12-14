@@ -3,12 +3,21 @@ import random
 def read_cities(file_name):
     f = open(file_name,'r')
     line = f.readline().rstrip()
+    '''
     road_map = []
     while line:
         elements = line.split('\t')
         road_map.append(tuple(elements))
         line = f.readline().rstrip()
     f.close()
+    '''
+    road_map = dict()
+    while line:
+        elements = line.split('\t')
+        road_map[(elements[0],elements[1])] = \
+        (round(float(elements[2]),2), round(float(elements[3]),2))
+        line = f.readline().rstrip()
+    f.close
     return road_map
 
 def print_cities(road_map):
@@ -16,7 +25,14 @@ def print_cities(road_map):
     Prints a list of cities, along with their locations. 
     Print only one or two digits after the decimal point.
     """
-    pass
+    '''
+    cit_list = []
+    for el in road_map:
+        cit_list.append(el[1:4])
+    '''
+    cit_list = [location + road_map[location] for location in road_map]
+    print(cit_list)
+    
 
 def compute_total_distance(road_map):
     """
@@ -24,7 +40,11 @@ def compute_total_distance(road_map):
     the connections in the `road_map`. Remember that it's a cycle, so that 
     (for example) in the initial `road_map`, Wyoming connects to Alabama...
     """
-    return (9.386+18.496+10.646)
+    #return (9.386+18.496+10.646)
+    # euclidean dist between x, y coordinates
+    
+
+
 
 def swap_cities(road_map, index1, index2):
     """
@@ -79,4 +99,5 @@ if __name__ == "__main__": #keep this in
     main()
 
 
-#print(read_cities('C:\\Users\\samee\\Documents\\POP1\\pop-one-project-skhan59\\city-data.txt'))
+roadmap = read_cities('C:\\Users\\samee\\Documents\\POP1\\pop-one-project-skhan59\\city-data.txt')
+print_cities(roadmap)

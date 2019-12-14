@@ -14,7 +14,8 @@ def test_compute_total_distance():
     
     assert type(road_map1) is list
     
-
+#### write stuff that will fail #####
+### write test then commit. then write code to pass test and commit etc etc ###
 
 def test_swap_cities():
     road_map1 = [("Kentucky", "Frankfort", 38.197274, -84.86311),\
@@ -30,3 +31,4 @@ def test_shift_cities():
                 ("Minnesota", "Saint Paul", 44.95, -93.094)]
     
     assert type(shift_cities(road_map1)) is list
+
