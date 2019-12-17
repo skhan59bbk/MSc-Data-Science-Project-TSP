@@ -1,4 +1,4 @@
-import random
+import random, math, pandas as pd, matplotlib.pyplot as plt
 
 def read_cities(file_name):
     f = open(file_name,'r')
@@ -30,8 +30,9 @@ def print_cities(road_map):
     for el in road_map:
         cit_list.append(el[1:4])
     '''
-    cit_list = [location + road_map[location] for location in road_map]
-    print(cit_list)
+    cities_list = [location + road_map[location] for location in road_map]
+    cities_df = pd.DataFrame(cities_list, columns=('State','City','Longitude','Latitude'))
+    print(cities_df)
     
 
 def compute_total_distance(road_map):
@@ -42,8 +43,7 @@ def compute_total_distance(road_map):
     """
     #return (9.386+18.496+10.646)
     # euclidean dist between x, y coordinates
-    
-
+    pass
 
 
 def swap_cities(road_map, index1, index2):
@@ -101,3 +101,4 @@ if __name__ == "__main__": #keep this in
 
 roadmap = read_cities('C:\\Users\\samee\\Documents\\POP1\\pop-one-project-skhan59\\city-data.txt')
 print_cities(roadmap)
+#print(compute_total_distance(roadmap))
