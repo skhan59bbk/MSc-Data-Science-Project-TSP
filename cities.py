@@ -1,38 +1,30 @@
-import random, math, pandas as pd, matplotlib.pyplot as plt
+import random, math, matplotlib.pyplot as plt #, pandas as pd, 
 
 def read_cities(file_name):
+
     f = open(file_name,'r')
     line = f.readline().rstrip()
-    '''
-    road_map = []
-    while line:
-        elements = line.split('\t')
-        road_map.append(tuple(elements))
-        line = f.readline().rstrip()
-    f.close()
-    '''
     road_map = dict()
+    
     while line:
         elements = line.split('\t')
         road_map[(elements[0],elements[1])] = \
         (round(float(elements[2]),2), round(float(elements[3]),2))
         line = f.readline().rstrip()
     f.close
-    return road_map
+    
+    cities_list = [location + road_map[location] for location in road_map]
+    #cities_df = pd.DataFrame(cities_list, columns=('State','City','Longitude','Latitude'))
+    
+    return cities_list
+
 
 def print_cities(road_map):
     """
     Prints a list of cities, along with their locations. 
     Print only one or two digits after the decimal point.
     """
-    '''
-    cit_list = []
-    for el in road_map:
-        cit_list.append(el[1:4])
-    '''
-    cities_list = [location + road_map[location] for location in road_map]
-    cities_df = pd.DataFrame(cities_list, columns=('State','City','Longitude','Latitude'))
-    print(cities_df)
+    print(road_map)
     
 
 def compute_total_distance(road_map):
@@ -43,8 +35,17 @@ def compute_total_distance(road_map):
     """
     #return (9.386+18.496+10.646)
     # euclidean dist between x, y coordinates
-    pass
-
+    distances = []
+    for i, city in enumerate(road_map):
+        if i == 0 or i > 5:
+            pass
+        else:
+            from_x = city[2]
+            from_y = city[2]
+            distances.append(from_x)
+    
+    return sum(distances)
+    #euclid = math.sqrt((from_x - to_x)^2 + (from_y - to_y)^2)
 
 def swap_cities(road_map, index1, index2):
     """
@@ -60,6 +61,7 @@ def swap_cities(road_map, index1, index2):
     new_map = []
     new_dist = 5.2
     return (new_map, new_dist)
+
 
 def shift_cities(road_map):
     """
@@ -80,6 +82,7 @@ def find_best_cycle(road_map):
     """
     pass
 
+
 def print_map(road_map):
     """
     Prints, in an easily understandable format, the cities and 
@@ -88,6 +91,7 @@ def print_map(road_map):
     """
     pass
 
+
 def main():
     """
     Reads in, and prints out, the city data, then creates the "best"
@@ -95,10 +99,24 @@ def main():
     """
     pass
 
+
+def visualise(road_map):
+    call_map = print_cities(road_map)
+    
+    ax, fig = plt.subplots()
+    plt.scatter(call_map.Longitude, call_map.Latitude, marker='x', label='Cities')
+    
+    plt.xlabel('Longitude')
+    plt.ylabel('Latitude')
+    plt.legend()
+    
+    plt.show()
+
 if __name__ == "__main__": #keep this in
     main()
 
 
 roadmap = read_cities('C:\\Users\\samee\\Documents\\POP1\\pop-one-project-skhan59\\city-data.txt')
-print_cities(roadmap)
-#print(compute_total_distance(roadmap))
+#print_cities(roadmap)
+print(compute_total_distance(roadmap))
+#visualise(roadmap)
