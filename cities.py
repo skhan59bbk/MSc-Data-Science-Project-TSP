@@ -36,16 +36,31 @@ def compute_total_distance(road_map):
     #return (9.386+18.496+10.646)
     # euclidean dist between x, y coordinates
     distances = []
+
     for i, city in enumerate(road_map):
-        if i == 0 or i > 5:
-            pass
+        if i == 0:
+            from_x, to_x = road_map[-1][2], road_map[i][2]
+            from_y, to_y = road_map[-1][3], road_map[i][3]
+            distances.append(math.sqrt((from_x - to_x)**2 + (from_y - to_y)**2))
         else:
-            from_x = city[2]
-            from_y = city[2]
-            distances.append(from_x)
+            if i < 50:
+                from_x, to_x = road_map[i-1][2], road_map[i][2]
+                from_y, to_y = road_map[i-1][3], road_map[i][3]
+                #from_y = road_map[i][3]
+                #to_x = road_map[i+1][0]
+                #to_y = road_map[i+1][3]
+                distances.append(math.sqrt((from_x - to_x)**2 + (from_y - to_y)**2))
     
+    cities_df = pd.DataFrame(road_map, columns=('State','City','Longitude','Latitude'))
+    cities_df['Distance'] = distances
+    
+    #print(distances)
+    #print(sum(distances))
+    #print(len(distances))
+    #print(road_map[-1])
+    #print(cities_df)
     return sum(distances)
-    #euclid = math.sqrt((from_x - to_x)^2 + (from_y - to_y)^2)
+
 
 def swap_cities(road_map, index1, index2):
     """
