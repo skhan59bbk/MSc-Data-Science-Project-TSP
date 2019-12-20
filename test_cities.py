@@ -23,6 +23,8 @@ def test_swap_cities():
                 ("Minnesota", "Saint Paul", 44.95, -93.094)]
     
     assert type(swap_cities(road_map1,5,12)) is tuple
+    assert type(swap_cities(road_map, 3, 6)[1]) is float
+    assert swap_cities(road_map, 1, 5)[1] != compute_total_distance(road_map)
 
 
 def test_shift_cities():
