@@ -168,10 +168,10 @@ if __name__ == "__main__":
     main()
 
 
-roadmap = read_cities('C:\\Users\\samee\\Documents\\POP1\\pop-one-project-skhan59\\city-data.txt')
+#roadmap = read_cities('C:\\Users\\samee\\Documents\\POP1\\pop-one-project-skhan59\\city-data.txt')
 #print_cities(roadmap)
 #print(compute_total_distance(roadmap))
 #visualise(roadmap)
 #print(swap_cities(roadmap,41,17))
 #print(shift_cities(roadmap))
-print(find_best_cycle(roadmap))
+#print(find_best_cycle(roadmap))
