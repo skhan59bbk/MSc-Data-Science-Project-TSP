@@ -13,8 +13,7 @@ def test_compute_total_distance():
         return e
     assert type(compute_total_distance(road_map1)) is float
     assert type(road_map1) is list
-    assert type(compute_total_distance(road_map1).distances) is list
-    assert compute_total_distance() > 0.0
+    assert compute_total_distance(road_map1) > 0.0
     
 
 def test_swap_cities():
