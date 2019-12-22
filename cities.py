@@ -1,4 +1,4 @@
-import random, math, matplotlib.pyplot as plt #, pandas as pd, 
+import random, math, matplotlib.pyplot as plt, pandas as pd
 
 def read_cities(file_name):
     try:
@@ -15,13 +15,12 @@ def read_cities(file_name):
         f.close
     
         cities_list = [location + road_map[location] for location in road_map]
-        #cities_df = pd.DataFrame(cities_list, columns=('State','City','Longitude','Latitude'))
-    
         return cities_list
-    
+   
     except Exception as e:          ### Use custom type error messages ###
         print(e)
-        
+    
+    
 def print_cities(road_map):
     """
     Prints a list of cities, along with their locations. 
@@ -36,28 +35,13 @@ def compute_total_distance(road_map):
     the connections in the `road_map`. Remember that it's a cycle, so that 
     (for example) in the initial `road_map`, Wyoming connects to Alabama...
     """
-    #return (9.386+18.496+10.646)
-    # euclidean dist between x, y coordinates
     distances = []
-    
-    ''' ### try to use modulo to clean up code ###
-    for i in enumerate(road_map):
-        from_x, to_x = road_map[i-1 % 50][2], road_map[i][2]
-        from_y, to_y = road_map[i-1 % 50][3], road_map[i][3]
+
+    for i, city in enumerate(road_map):
+        from_x, to_x = road_map[(i-1) % len(road_map)][2], road_map[i][2]
+        from_y, to_y = road_map[(i-1) % len(road_map)][3], road_map[i][3]
         distances.append(math.sqrt((from_x - to_x)**2 + (from_y - to_y)**2))
 
-    '''
-    for i, city in enumerate(road_map):
-        if i == 0:
-            from_x, to_x = road_map[-1][2], road_map[i][2]
-            from_y, to_y = road_map[-1][3], road_map[i][3]
-            distances.append(math.sqrt((from_x - to_x)**2 + (from_y - to_y)**2))
-        else:
-            if i < 50:
-                from_x, to_x = road_map[i-1][2], road_map[i][2]
-                from_y, to_y = road_map[i-1][3], road_map[i][3]
-                distances.append(math.sqrt((from_x - to_x)**2 + (from_y - to_y)**2))
-     
     #cities_df = pd.DataFrame(road_map, columns=('State','City','Longitude','Latitude'))
     #cities_df['Distance'] = distances
     
@@ -103,7 +87,7 @@ def shift_cities(road_map):
     for i, city in enumerate(road_map):
         new_road_map.append(road_map[(i-1) % len(road_map)])
 
-    return compute_total_distance(new_road_map)
+    return new_road_map
 
 
 def find_best_cycle(road_map):
@@ -115,22 +99,27 @@ def find_best_cycle(road_map):
     """
     i = 0
     best_cycle = compute_total_distance(road_map)
+    attempt_map = road_map
     
-    while i < 1000:
+    while i <= 100:
         try:
-            rand_ind1 = random.randint(0, len(road_map)-1)
-            rand_ind2 = random.randint(0, len(road_map)-1)
-            distance = swap_cities(road_map,rand_ind1, rand_ind2)[1]
+            rand_idx1 = random.randint(0, len(road_map)-1)
+            rand_idx2 = random.randint(0, len(road_map)-1)
+            distance = compute_total_distance(swap_cities(attempt_map,rand_idx1, rand_idx2)[0])
             if distance < best_cycle:
                 best_cycle = distance
-            #print(best_cycle)
+            '''
+            else:
+                attempt_map = shift_cities(road_map)
+            '''
         except Exception as e:
             print('Error: '+str(e))
+        attempt_map = shift_cities(road_map)
         i += 1
  
     #random.seed(100)
     
-    return best_cycle
+    return best_cycle, road_map
 
 
 def print_map(road_map):
@@ -139,7 +128,10 @@ def print_map(road_map):
     their connections, along with the cost for each connection 
     and the total cost.
     """
-    pass
+    
+    best_map = find_best_cycle(road_map)[1]
+    cities_df = pd.DataFrame(best_map, columns=('State','City','Longitude','Latitude'))
+    return cities_df
 
 
 def main():
@@ -147,14 +139,21 @@ def main():
     Reads in, and prints out, the city data, then creates the "best"
     cycle and prints it out.
     """
-    pass ### stick everything in here instead ###
+    roadmap = read_cities('C:\\Users\\samee\\Documents\\POP1\\pop-one-project-skhan59\\city-data.txt')
+    print('--->> Here is the original route (Distance: {}) <<---'.format(compute_total_distance(roadmap)))
+    print_cities(roadmap)
+    #print(compute_total_distance(roadmap))
+    #visualise(roadmap)
+    #print(swap_cities(roadmap,41,17))
+    #print(shift_cities(roadmap))
+    #print(find_best_cycle(roadmap))
+    print('')
+    print('--->> Here is a shorter route (Distance: {}) <<---'.format(find_best_cycle(roadmap)[0]))
+    print(print_map(roadmap))
 
 
 def visualise(road_map):
     
-    cities_list = [location + road_map[location] for location in road_map]
-    cities_df = pd.DataFrame(cities_list, columns=('State','City','Longitude','Latitude'))
- 
     ax, fig = plt.subplots()
     plt.scatter(cities_df['Longitude'], cities_df['Latitude'], marker='x', label='Cities')
     
@@ -164,14 +163,6 @@ def visualise(road_map):
     
     plt.show()
 
+
 if __name__ == "__main__": 
     main()
-
-
-#roadmap = read_cities('C:\\Users\\samee\\Documents\\POP1\\pop-one-project-skhan59\\city-data.txt')
-#print_cities(roadmap)
-#print(compute_total_distance(roadmap))
-#visualise(roadmap)
-#print(swap_cities(roadmap,41,17))
-#print(shift_cities(roadmap))
-#print(find_best_cycle(roadmap))
