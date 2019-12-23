@@ -31,6 +31,6 @@ def test_shift_cities():
                 ("Delaware", "Dover", 39.161921, -75.526755),\
                 ("Minnesota", "Saint Paul", 44.95, -93.094)]
     
-    assert type(shift_cities(road_map1)) is float
-    assert shift_cities(road_map1) == compute_total_distance(road_map1)
+    assert type(shift_cities(road_map1)) is list
+    assert shift_cities(road_map1) != compute_total_distance(road_map1)
     assert road_map1[0] != shift_cities(road_map1)[0]
