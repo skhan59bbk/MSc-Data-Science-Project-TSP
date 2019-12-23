@@ -1,4 +1,4 @@
-import random, math, matplotlib.pyplot as plt, pandas as pd
+import random, math, matplotlib.pyplot as plt#, pandas as pd
 
 def read_cities(file_name):
     try:
@@ -97,6 +97,9 @@ def find_best_cycle(road_map):
     After `10000` swaps/shifts, return the best cycle found so far.
     Use randomly generated indices for swapping.
     """
+    
+    ### shift 50 times, swap 10000 in each shift ####
+    
     i = 0
     best_cycle = compute_total_distance(road_map)
     attempt_map = road_map
@@ -116,9 +119,8 @@ def find_best_cycle(road_map):
             print('Error: '+str(e))
         attempt_map = shift_cities(road_map)
         i += 1
- 
     #random.seed(100)
-    
+
     return best_cycle, road_map
 
 

@@ -33,4 +33,4 @@ def test_shift_cities():
     
     assert type(shift_cities(road_map1)) is float
     assert shift_cities(road_map1) == compute_total_distance(road_map1)
-
+    assert road_map1[0] != shift_cities(road_map1)[0]
