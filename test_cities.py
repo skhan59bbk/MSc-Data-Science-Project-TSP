@@ -24,6 +24,7 @@ def test_swap_cities():
     assert type(swap_cities(road_map1,1,2)) is tuple
     assert type(swap_cities(road_map1, 1, 2)[1]) is float
     assert swap_cities(road_map1, 1, 2)[1] == compute_total_distance(road_map1)
+    assert swap_cities(road_map1, 2, 2)[0] == road_map1
 
 
 def test_shift_cities():

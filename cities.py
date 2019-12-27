@@ -1,4 +1,4 @@
-import random, math, matplotlib.pyplot as plt#, pandas as pd
+import random, math, matplotlib.pyplot as plt, pandas as pd
 
 def read_cities(file_name):
     try:
@@ -68,11 +68,11 @@ def swap_cities(road_map, index1, index2):
     try:
         new_road_map[index1], new_road_map[index2] = \
         new_road_map[index2], new_road_map[index1]
-        return (new_road_map, compute_total_distance(new_road_map))
+        #return (new_road_map, compute_total_distance(new_road_map))
     except Exception as e:
-        return 'Error: '+str(e)
+        print('Error: '+str(e))
     
-
+    return (new_road_map, compute_total_distance(new_road_map))
     #return (new_map, new_dist)
 
 
@@ -98,30 +98,62 @@ def find_best_cycle(road_map):
     Use randomly generated indices for swapping.
     """
     
-    ### shift 50 times, swap 10000 in each shift ####
-    
-    i = 0
-    best_cycle = compute_total_distance(road_map)
+    i = 1
     attempt_map = road_map
-    
-    while i <= 100:
-        try:
-            rand_idx1 = random.randint(0, len(road_map)-1)
-            rand_idx2 = random.randint(0, len(road_map)-1)
-            distance = compute_total_distance(swap_cities(attempt_map,rand_idx1, rand_idx2)[0])
-            if distance < best_cycle:
-                best_cycle = distance
-            '''
-            else:
-                attempt_map = shift_cities(road_map)
-            '''
-        except Exception as e:
-            print('Error: '+str(e))
-        attempt_map = shift_cities(road_map)
-        i += 1
-    #random.seed(100)
+    best_map = attempt_map
+    best_cycle = compute_total_distance(attempt_map)
+    print('starting best: ', best_cycle)
+    print('computed best: ', compute_total_distance(best_map))
+    #print('starting map', [(i, city) for (i, city) in enumerate(attempt_map)])
+    #print('starting best cycle', best_cycle)
 
-    return best_cycle, road_map
+    while i <= 10:
+        #try:       
+            #random.seed(10)
+            print(i, '### attempt map ###')
+            print([(num, city) for (num, city) in enumerate(attempt_map)])
+            #print(i, 'best cycle so far', best_cycle)
+            rand_idx1 = random.randint(0, len(attempt_map)-1)
+            rand_idx2 = random.randint(0, len(attempt_map)-1)
+            print(i, rand_idx1, rand_idx2)
+            (new_map, distance) = swap_cities(attempt_map, rand_idx1, rand_idx2)#[0], \
+                                #swap_cities(attempt_map, rand_idx1, rand_idx2)[1]
+            #print('new_map', new_map)
+            #print('new dist', distance)
+            #print([(i, city) for (i, city) in enumerate(swap_cities(attempt_map,rand_idx1, rand_idx2)[0])])
+            #print('before checking against new dist, best cycle: ', best_cycle)
+            if distance < best_cycle:
+                #print('best cycle if lower', best_cycle)
+                best_cycle = distance
+                #print('updated best cycle', best_cycle)
+                #print(i, best_cycle)
+                best_map = new_map
+                print('### best map ###', compute_total_distance(best_map))
+                print([(num, city) for (num, city) in enumerate(best_map)])
+                attempt_map = best_map
+                print('### new attempt map ###', compute_total_distance(best_map))
+                #print('yea boi', best_cycle)
+                #print('#### NEW MAPPPPP ####')
+                print([(num, city) for (num, city) in enumerate(attempt_map)])
+                #print('attempt map updated with new map?', attempt_map == new_map)
+                #attempt_map = shift_cities(attempt_map)
+            
+            else:
+                attempt_map = shift_cities(new_map) 
+                print('#### No better. now map has shifted. ####')
+                print('### best map unchanged ###', compute_total_distance(best_map))
+                print([(num, city) for (num, city) in enumerate(best_map)])     
+                #print([(num, city) for (num, city) in enumerate(attempt_map)])
+            #print('attempt map updated with new map?', attempt_map == new_map)
+            i += 1
+        #except Exception as e:
+            #print('Error: '+str(e))
+        #attempt_map = shift_cities(road_map)
+        #i += 1
+    
+    print('best dist:', compute_total_distance(best_map))
+    print('ending best: ', best_cycle)
+    return best_cycle#, road_map
 
 
 def print_map(road_map):
@@ -141,17 +173,20 @@ def main():
     Reads in, and prints out, the city data, then creates the "best"
     cycle and prints it out.
     """
+    ## change read_cities to user input
     roadmap = read_cities('C:\\Users\\samee\\Documents\\POP1\\pop-one-project-skhan59\\city-data.txt')
-    print('--->> Here is the original route (Distance: {}) <<---'.format(compute_total_distance(roadmap)))
-    print_cities(roadmap)
+    #print('--->> Here is the original route (Distance: {}) <<---'.format(compute_total_distance(roadmap)))
+    #print_cities(roadmap)
+    
     #print(compute_total_distance(roadmap))
     #visualise(roadmap)
-    #print(swap_cities(roadmap,41,17))
+    #print(swap_cities(roadmap,24,31))
     #print(shift_cities(roadmap))
-    #print(find_best_cycle(roadmap))
-    print('')
-    print('--->> Here is a shorter route (Distance: {}) <<---'.format(find_best_cycle(roadmap)[0]))
-    print(print_map(roadmap))
+    print(find_best_cycle(roadmap))
+    
+    #print('')
+    #print('--->> Here is a shorter route (Distance: {}) <<---'.format(find_best_cycle(roadmap)[0]))
+    #print(print_map(roadmap))
 
 
 def visualise(road_map):
@@ -168,3 +203,23 @@ def visualise(road_map):
 
 if __name__ == "__main__": 
     main()
+
+
+
+
+
+
+''' 
+still to do
+
+best cycle: storing best map and best cycle outside of loop.
+more tests!
+visualise with tkinter
+user input map file location
+best map format, including distance. try not to use dataframe
+check all functions return what they are supposed to
+remove commented out code
+
+'''
+
+
