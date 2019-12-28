@@ -1,4 +1,6 @@
-import random, math, matplotlib.pyplot as plt, pandas as pd
+import random, math, pandas as pd
+from tkinter import *
+
 
 def read_cities(file_name):
     try:
@@ -167,6 +169,12 @@ def print_map(road_map):
     cities_df = pd.DataFrame(best_map, columns=('State','City','Longitude','Latitude'))
     return cities_df
 
+def visualise(road_map):
+    
+    root = Tk()
+    # implementation here
+    root.mainloop()
+
 
 def main():
     """
@@ -188,17 +196,6 @@ def main():
     #print('--->> Here is a shorter route (Distance: {}) <<---'.format(find_best_cycle(roadmap)[0]))
     #print(print_map(roadmap))
 
-
-def visualise(road_map):
-    
-    ax, fig = plt.subplots()
-    plt.scatter(cities_df['Longitude'], cities_df['Latitude'], marker='x', label='Cities')
-    
-    plt.xlabel('Longitude')
-    plt.ylabel('Latitude')
-    plt.legend()
-    
-    plt.show()
 
 
 if __name__ == "__main__": 
