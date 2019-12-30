@@ -62,20 +62,16 @@ def swap_cities(road_map, index1, index2):
     Allow for the possibility that `index1=index2`,
     and handle this case correctly.
     """
-    #new_map = []
-    #new_dist = 5.2
     
     new_road_map = road_map
     
     try:
         new_road_map[index1], new_road_map[index2] = \
         new_road_map[index2], new_road_map[index1]
-        #return (new_road_map, compute_total_distance(new_road_map))
     except Exception as e:
         print('Error: '+str(e))
     
     return (new_road_map, compute_total_distance(new_road_map))
-    #return (new_map, new_dist)
 
 
 def shift_cities(road_map):
@@ -101,7 +97,7 @@ def find_best_cycle(road_map):
     """
     
     best_map = road_map
-    #attempt_map = road_map
+    attempt_map = road_map
     best_cycle = compute_total_distance(best_map)
     print('starting best: ', best_cycle)
     print('computed best: ', compute_total_distance(best_map))
@@ -111,7 +107,7 @@ def find_best_cycle(road_map):
     
     while i <= 2:
         #try:  
-            attempt_map = road_map  ### AMEND THIS ####
+            #attempt_map = road_map  ### AMEND THIS ####
             print(i, 'best', best_cycle)
             print(i, '### attempt map ###')
             print([(num, city) for (num, city) in enumerate(attempt_map)])
@@ -176,11 +172,11 @@ def main():
     roadmap = read_cities('C:\\Users\\samee\\Documents\\city-data-small.txt')
     #print('--->> Here is the original route (Distance: {}) <<---'.format(compute_total_distance(roadmap)))
     #print_cities(roadmap)
-    print(compute_total_distance(roadmap))
+    #print(compute_total_distance(roadmap))
     #visualise(roadmap)
     #print(swap_cities(roadmap,24,31))
     #print(compute_total_distance(shift_cities(roadmap)))
-    #print(find_best_cycle(roadmap))
+    print(find_best_cycle(roadmap))
     
     #print('')
     #print('--->> Here is a shorter route (Distance: {}) <<---'.format(find_best_cycle(roadmap)[0]))
