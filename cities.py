@@ -111,7 +111,7 @@ def find_best_cycle(road_map):
     
     while i <= 2:
         #try:  
-            attempt_map = road_map  ### BOTH ARE CONNECTED. MAKE SHALLOW COPY INSTEAD!! ####
+            attempt_map = road_map  ### AMEND THIS ####
             print(i, 'best', best_cycle)
             print(i, '### attempt map ###')
             print([(num, city) for (num, city) in enumerate(attempt_map)])
@@ -173,15 +173,10 @@ def main():
     cycle and prints it out.
     """
     ## change read_cities to user input
-    #roadmap = read_cities('C:\\Users\\samee\\Documents\\city-data-small.txt')
+    roadmap = read_cities('C:\\Users\\samee\\Documents\\city-data-small.txt')
     #print('--->> Here is the original route (Distance: {}) <<---'.format(compute_total_distance(roadmap)))
     #print_cities(roadmap)
-    road_map2 = [("Kentucky", "Frankfort", 38.197274, -84.86311),\
-                ("Delaware", "Dover", 39.161921, -75.526755),\
-                ("Minnesota", "Saint Paul", 44.95, -93.094),\
-                ('Georgia', 'Atlanta', 33.76, -84.39),\
-                ('Florida', 'Tallahassee', 30.45, -84.27)]
-    print(compute_total_distance(road_map2))
+    print(compute_total_distance(roadmap))
     #visualise(roadmap)
     #print(swap_cities(roadmap,24,31))
     #print(compute_total_distance(shift_cities(roadmap)))
