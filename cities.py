@@ -156,19 +156,18 @@ def print_map(road_map):
     cities_df = pd.DataFrame(best_map, columns=('State','City','Longitude','Latitude'))
     return cities_df
 
+
 def visualise(road_map):
-    
-    lst = [(x,y) for (state,city,x,y) in road_map]
-    #print(lst)
-    
+       
     root = Tk()
+    root.title("TSP: Best Map")
     
     canvas_scale = 3
     canvas_margin = 50
     canvas_height = (180 * canvas_scale) + canvas_margin
     canvas_width = (360 * canvas_scale) + canvas_margin
     
-    canvas = Canvas(root, width=canvas_width, height=canvas_height)
+    canvas = Canvas(root, width=canvas_width, height=canvas_height, bg='#EFCB9B')
     canvas.pack()
     
     # Draw and Label the Lat/Long lines
@@ -177,25 +176,35 @@ def visualise(road_map):
     canvas.create_text(canvas_width/2,0+(canvas_margin*0.75), text='Latitude')
     canvas.create_text(0+canvas_margin,(canvas_height/2)-15, text='Longitude')
     
-    # Latitude Markers
+    # Longitude Markers
     canvas.create_line(0+canvas_margin, canvas_height/2, 0+canvas_margin, (canvas_height/2)+5)
     canvas.create_text(0+canvas_margin, (canvas_height/2)+10, text='-180')
     
     canvas.create_line(canvas_width-canvas_margin, canvas_height/2, canvas_width-canvas_margin, (canvas_height/2)+5)
     canvas.create_text(canvas_width-canvas_margin, (canvas_height/2)+10, text='+180')
     
-    # Longitude Markers
+    # Latitude Markers
     canvas.create_line(canvas_width/2, 0+canvas_margin, (canvas_width/2)-5, 0+canvas_margin)
     canvas.create_text((canvas_width/2)+13, 0+canvas_margin, text='+90')
     
     canvas.create_line(canvas_width/2, canvas_height-canvas_margin, (canvas_width/2)-5, canvas_height-canvas_margin)
     canvas.create_text((canvas_width/2)+13, canvas_height-canvas_margin, text='-90')
     
-    # normalise coords with ref to this grid
-    # add order, city labels, arrows?
+    # Origin
+    canvas.create_oval((canvas_width/2)-2 , (canvas_height/2)-2, (canvas_width/2)+2, (canvas_height/2)+2)
     
-    for x, y in lst:
+    
+    lst = [(city,x,y) for (state,city,x,y) in road_map]
+    #print(lst)
+    
+    # normalise coords with ref to this grid
+    # add order, arrows?
+    
+    for city, x, y in lst:
+        #adj_x = 
+        #adj_y = 
         canvas.create_oval(x-5,abs(y)-5,x+5,abs(y)+5)
+        canvas.create_text(x-5,abs(y)-5, text=city)
         print(x,y)
         
     
