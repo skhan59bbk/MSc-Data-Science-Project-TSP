@@ -158,8 +158,47 @@ def print_map(road_map):
 
 def visualise(road_map):
     
+    lst = [(x,y) for (state,city,x,y) in road_map]
+    #print(lst)
+    
     root = Tk()
-    # implementation here
+    
+    canvas_scale = 3
+    canvas_margin = 50
+    canvas_height = (180 * canvas_scale) + canvas_margin
+    canvas_width = (360 * canvas_scale) + canvas_margin
+    
+    canvas = Canvas(root, width=canvas_width, height=canvas_height)
+    canvas.pack()
+    
+    # Draw and Label the Lat/Long lines
+    canvas.create_line(canvas_width/2, 0+canvas_margin, canvas_width/2, canvas_height-canvas_margin, dash=(3,1))
+    canvas.create_line(0+canvas_margin, canvas_height/2, canvas_width-canvas_margin, canvas_height/2, dash=(3,1))
+    canvas.create_text(canvas_width/2,0+(canvas_margin*0.75), text='Latitude')
+    canvas.create_text(0+canvas_margin,(canvas_height/2)-15, text='Longitude')
+    
+    # Latitude Markers
+    canvas.create_line(0+canvas_margin, canvas_height/2, 0+canvas_margin, (canvas_height/2)+5)
+    canvas.create_text(0+canvas_margin, (canvas_height/2)+10, text='-180')
+    
+    canvas.create_line(canvas_width-canvas_margin, canvas_height/2, canvas_width-canvas_margin, (canvas_height/2)+5)
+    canvas.create_text(canvas_width-canvas_margin, (canvas_height/2)+10, text='+180')
+    
+    # Longitude Markers
+    canvas.create_line(canvas_width/2, 0+canvas_margin, (canvas_width/2)-5, 0+canvas_margin)
+    canvas.create_text((canvas_width/2)+13, 0+canvas_margin, text='+90')
+    
+    canvas.create_line(canvas_width/2, canvas_height-canvas_margin, (canvas_width/2)-5, canvas_height-canvas_margin)
+    canvas.create_text((canvas_width/2)+13, canvas_height-canvas_margin, text='-90')
+    
+    # normalise coords with ref to this grid
+    # add order, city labels, arrows?
+    
+    for x, y in lst:
+        canvas.create_oval(x-5,abs(y)-5,x+5,abs(y)+5)
+        print(x,y)
+        
+    
     root.mainloop()
 
 
@@ -176,8 +215,8 @@ def main():
     #visualise(roadmap)
     #print(swap_cities(roadmap,24,31))
     #print(compute_total_distance(shift_cities(roadmap)))
-    print(find_best_cycle(roadmap))
-    
+    #print(find_best_cycle(roadmap))
+    visualise(roadmap)
     #print('')
     #print('--->> Here is a shorter route (Distance: {}) <<---'.format(find_best_cycle(roadmap)[0]))
     #print(print_map(roadmap))
