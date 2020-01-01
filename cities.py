@@ -1,5 +1,5 @@
-import random, math
-from tkinter import *
+import random, math, tkinter
+#from tkinter import *
 
 
 def read_cities(file_name):
@@ -7,28 +7,27 @@ def read_cities(file_name):
         f = open(file_name,'r')
         line = f.readline().rstrip()
     
-        road_map_dict = dict()
+        cities_list = []
         
         while line:
             elements = line.split('\t')
-            road_map_dict[(elements[0], elements[1])] = (float(elements[2]), float(elements[3]))
+            cities_list.append((elements[0], elements[1], float(elements[2]), float(elements[3])))
             line = f.readline().rstrip()
         f.close
+        
+        return cities_list
   
-    except Exception as e:
-        print(e)    
-
-    cities_list = [location + road_map_dict[location] for location in road_map_dict]
-    return cities_list
- 
+    except Exception:
+        print('>> ERROR: Unable to find file! Please check location and try again. <<')
+        
     
 def print_cities(road_map):
     """
     Prints a list of cities, along with their locations. 
     Print only one or two digits after the decimal point.
     """    
-    for city in road_map:
-        print('{}, {}, {}, {}'.format(city[0], city[1], round(city[2],2), round(city[3],2)))
+    for location in road_map:
+        print('{}, {}: ({}, {})'.format(location[0], location[1], round(location[2],2), round(location[3],2)))
 
 
 def compute_total_distance(road_map):
@@ -44,12 +43,8 @@ def compute_total_distance(road_map):
         from_long, to_long = road_map[(i-1) % len(road_map)][3], road_map[i][3]
         distances.append(math.sqrt((from_long - to_long)**2 + (from_lat - to_lat)**2))
 
-    #cities_df = pd.DataFrame(road_map, columns=('State','City','Longitude','Latitude'))
-    #cities_df['Distance'] = distances
-    
-    #print(cities_df)
     return round(sum(distances),2)
-
+    
 
 def swap_cities(road_map, index1, index2):
     """
@@ -80,12 +75,12 @@ def shift_cities(road_map):
     to the position i+1. The city at the last position moves to the position
     0. Return the new road map. 
     """
-    new_road_map = []
+    shifted_road_map = []
     
     for i, city in enumerate(road_map):
-        new_road_map.append(road_map[(i-1) % len(road_map)])
+        shifted_road_map.append(road_map[(i-1) % len(road_map)])
 
-    return new_road_map
+    return shifted_road_map
 
 
 def find_best_cycle(road_map):
@@ -105,7 +100,7 @@ def find_best_cycle(road_map):
     #print('starting best cycle', best_cycle)
     i = 1
     
-    while i <= 2:
+    while i <= 5:
         #try:  
             #attempt_map = road_map  ### AMEND THIS ####
             #print(i, 'best', best_cycle)
@@ -156,6 +151,8 @@ def print_map(road_map):
 
 
 def visualise(road_map):
+    
+    best_map = find_best_cycle(road_map)[1]
        
     root = Tk()
     root.title("TSP: Best Map")
@@ -202,11 +199,11 @@ def visualise(road_map):
     canvas.create_oval((canvas_width/2)-2 , (canvas_height/2)-2, (canvas_width/2)+2, (canvas_height/2)+2)
     
        
-    for state, city, lat, long in road_map:
+    for state, city, lat, long in best_map:
         #adj_x = 
         #adj_y = 
         canvas.create_oval(abs(long)-3, lat-3, abs(long)+3, lat+3)
-        canvas.create_text(abs(long)-5, lat-5, text=city)
+        canvas.create_text(abs(long)-5, lat-5, text=str(city))
         #print(lat,long)
         
     
@@ -218,14 +215,21 @@ def main():
     Reads in, and prints out, the city data, then creates the "best"
     cycle and prints it out.
     """
-    roadmap = read_cities('C:\\Users\\samee\\Documents\\city-data-small.txt')
-    #print_cities(roadmap)
-    #print(compute_total_distance(roadmap))
-    #print(swap_cities(roadmap,2,6))
-    #print(compute_total_distance(shift_cities(roadmap)))
-    #print(find_best_cycle(roadmap))
-    #visualise(roadmap)
-    #print_map(roadmap)
+    roadmap = read_cities(input('Please enter the file location: '))
+    print('')
+    
+    try:    
+        #print_cities(roadmap)
+        #print(compute_total_distance(roadmap))
+        #print(swap_cities(roadmap,2,6))
+        #print(shift_cities(roadmap))
+        #print(compute_total_distance(shift_cities(roadmap)))
+        #print(find_best_cycle(roadmap))
+        #print('Note: visualise function opens in a new window.')
+        visualise(roadmap)
+        #print_map(roadmap)
+    except Exception as e:
+        print(str(e))
 
 
 if __name__ == "__main__": 
@@ -242,14 +246,16 @@ still to do
 best cycle: storing best map and best cycle outside of loop.
 more tests!
 visualise - adjusted coords, additional formatting etc.
-user input map file location
+
 best map format, including distance. try not to use dataframe
 check all functions return what they are supposed to
 remove commented out code
-swap cities 2dp output
+
 print_map - improve output
 better error classification
 coding style, check spacing etc (PEP8)
+
+C:/Users/samee/Documents/city-data-small.txt
 
 '''
 
