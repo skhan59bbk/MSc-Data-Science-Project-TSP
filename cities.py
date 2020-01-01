@@ -1,4 +1,4 @@
-import random, math, pandas as pd
+import random, math
 from tkinter import *
 
 
@@ -99,8 +99,8 @@ def find_best_cycle(road_map):
     best_map = road_map
     attempt_map = road_map
     best_cycle = compute_total_distance(best_map)
-    print('starting best: ', best_cycle)
-    print('computed best: ', compute_total_distance(best_map))
+    #print('starting best: ', best_cycle)
+    #print('computed best: ', compute_total_distance(best_map))
     #print('starting map', [(i, city) for (i, city) in enumerate(attempt_map)])
     #print('starting best cycle', best_cycle)
     i = 1
@@ -108,31 +108,31 @@ def find_best_cycle(road_map):
     while i <= 2:
         #try:  
             #attempt_map = road_map  ### AMEND THIS ####
-            print(i, 'best', best_cycle)
-            print(i, '### attempt map ###')
-            print([(num, city) for (num, city) in enumerate(attempt_map)])
+            #print(i, 'best', best_cycle)
+            #print(i, '### attempt map ###')
+            #print([(num, city) for (num, city) in enumerate(attempt_map)])
             #print(i, 'best cycle so far', best_cycle)
             rand_idx1 = random.randint(0, len(attempt_map)-1)
             rand_idx2 = random.randint(0, len(attempt_map)-1)
-            print(i, rand_idx1, rand_idx2)
+            #print(i, rand_idx1, rand_idx2)
             (new_map, distance) = swap_cities(attempt_map, rand_idx1, rand_idx2)
-            print('new_map', new_map)
-            print('new dist', distance)
-            print('before checking against new dist, best cycle: ', best_cycle)
+            #print('new_map', new_map)
+            #print('new dist', distance)
+            #print('before checking against new dist, best cycle: ', best_cycle)
             if distance < best_cycle:
                 best_cycle = distance
                 best_map = new_map
-                print('### best map ###', compute_total_distance(best_map), best_cycle)
-                print([(num, city) for (num, city) in enumerate(best_map)])
+                #print('### best map ###', compute_total_distance(best_map), best_cycle)
+                #print([(num, city) for (num, city) in enumerate(best_map)])
                 attempt_map = best_map
-                print('### new attempt map ###', compute_total_distance(best_map))
-                print([(num, city) for (num, city) in enumerate(attempt_map)])        
+                #print('### new attempt map ###', compute_total_distance(best_map))
+                #print([(num, city) for (num, city) in enumerate(attempt_map)])        
             else:
-                print('#### No better. now map has shifted. ####')
-                print('### best map unchanged ###', compute_total_distance(best_map), best_cycle)
-                print('best map --> ', [(num, city) for (num, city) in enumerate(best_map)])  
+                #print('#### No better. now map has shifted. ####')
+                #print('### best map unchanged ###', compute_total_distance(best_map), best_cycle)
+                #print('best map --> ', [(num, city) for (num, city) in enumerate(best_map)])  
                 attempt_map = shift_cities(new_map) 
-                print('attempt map -->',[(num, city) for (num, city) in enumerate(attempt_map)])
+                #print('attempt map -->',[(num, city) for (num, city) in enumerate(attempt_map)])
             #print('attempt map updated with new map?', attempt_map == new_map)
             i += 1
         #except Exception as e:
@@ -140,8 +140,8 @@ def find_best_cycle(road_map):
         #attempt_map = shift_cities(road_map)
         #i += 1
     
-    print('best dist:', compute_total_distance(best_map))
-    print('ending best: ', best_cycle)
+    #print('best dist:', compute_total_distance(best_map))
+    #print('ending best: ', best_cycle)
     return best_cycle, best_map
 
 
@@ -151,10 +151,8 @@ def print_map(road_map):
     their connections, along with the cost for each connection 
     and the total cost.
     """
-    
     best_map = find_best_cycle(road_map)[1]
-    cities_df = pd.DataFrame(best_map, columns=('State','City','Longitude','Latitude'))
-    return cities_df
+    print(best_map)
 
 
 def visualise(road_map):
@@ -226,8 +224,8 @@ def main():
     #print(swap_cities(roadmap,2,6))
     #print(compute_total_distance(shift_cities(roadmap)))
     #print(find_best_cycle(roadmap))
-    visualise(roadmap)
-
+    #visualise(roadmap)
+    #print_map(roadmap)
 
 
 if __name__ == "__main__": 
@@ -249,6 +247,7 @@ best map format, including distance. try not to use dataframe
 check all functions return what they are supposed to
 remove commented out code
 swap cities 2dp output
+print_map - improve output
 better error classification
 coding style, check spacing etc (PEP8)
 
