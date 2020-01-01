@@ -1,5 +1,5 @@
-import random, math, tkinter
-#from tkinter import *
+import random, math
+from tkinter import *
 
 
 def read_cities(file_name):
@@ -26,9 +26,12 @@ def print_cities(road_map):
     Prints a list of cities, along with their locations. 
     Print only one or two digits after the decimal point.
     """    
-    for location in road_map:
-        print('{}, {}: ({}, {})'.format(location[0], location[1], round(location[2],2), round(location[3],2)))
-
+    print('---> The original map (total distance {}) <---'.format(compute_total_distance(road_map)))
+    for i, location in enumerate(road_map):
+        print('{}. {}, {}: ({},{})'.format(i, location[1], \
+              location[0], round(location[2],1), round(location[3],1)))
+    print('')
+    
 
 def compute_total_distance(road_map):
     """
@@ -63,10 +66,10 @@ def swap_cities(road_map, index1, index2):
     try:
         new_road_map[index1], new_road_map[index2] = \
         new_road_map[index2], new_road_map[index1]
-    except Exception as e:
-        print('Error: '+str(e))
+        return (new_road_map, compute_total_distance(new_road_map))
     
-    return (new_road_map, compute_total_distance(new_road_map))
+    except Exception as e:
+        print('Error swapping cities: '+str(e))
 
 
 def shift_cities(road_map):
@@ -100,33 +103,34 @@ def find_best_cycle(road_map):
     #print('starting best cycle', best_cycle)
     i = 1
     
-    while i <= 5:
+    while i <= 10:
         #try:  
             #attempt_map = road_map  ### AMEND THIS ####
             #print(i, 'best', best_cycle)
             #print(i, '### attempt map ###')
             #print([(num, city) for (num, city) in enumerate(attempt_map)])
             #print(i, 'best cycle so far', best_cycle)
-            rand_idx1 = random.randint(0, len(attempt_map)-1)
-            rand_idx2 = random.randint(0, len(attempt_map)-1)
+            rand_idx1 = random.randint(0, len(best_map)-1)
+            rand_idx2 = random.randint(0, len(best_map)-1)
             #print(i, rand_idx1, rand_idx2)
-            (new_map, distance) = swap_cities(attempt_map, rand_idx1, rand_idx2)
+            (new_map, distance) = swap_cities(best_map, rand_idx1, rand_idx2)
             #print('new_map', new_map)
-            #print('new dist', distance)
-            #print('before checking against new dist, best cycle: ', best_cycle)
+            print('new dist', distance)
+            print('before checking against new dist, best cycle: ', best_cycle)
             if distance < best_cycle:
-                best_cycle = distance
+                #best_cycle = distance
+                print('distance updated', best_cycle, distance)
                 best_map = new_map
                 #print('### best map ###', compute_total_distance(best_map), best_cycle)
                 #print([(num, city) for (num, city) in enumerate(best_map)])
-                attempt_map = best_map
+                #attempt_map = best_map
                 #print('### new attempt map ###', compute_total_distance(best_map))
                 #print([(num, city) for (num, city) in enumerate(attempt_map)])        
             else:
                 #print('#### No better. now map has shifted. ####')
                 #print('### best map unchanged ###', compute_total_distance(best_map), best_cycle)
                 #print('best map --> ', [(num, city) for (num, city) in enumerate(best_map)])  
-                attempt_map = shift_cities(new_map) 
+                best_map = shift_cities(new_map) 
                 #print('attempt map -->',[(num, city) for (num, city) in enumerate(attempt_map)])
             #print('attempt map updated with new map?', attempt_map == new_map)
             i += 1
@@ -146,18 +150,22 @@ def print_map(road_map):
     their connections, along with the cost for each connection 
     and the total cost.
     """
-    best_map = find_best_cycle(road_map)[1]
-    print(best_map)
+    best = find_best_cycle(road_map)
+
+    print('---> The best map (total distance {}) <---'.format(best[0]))
+    for i, location in enumerate(best[1]):
+        print('{}. {}, {}'.format(i, location[1], location[0]))
+    print('')
 
 
 def visualise(road_map):
     
-    best_map = find_best_cycle(road_map)[1]
+    #best_map = find_best_cycle(road_map)[1]
        
     root = Tk()
     root.title("TSP: Best Map")
     
-    canvas_scale = 2
+    canvas_scale = 3
     canvas_margin = 50
     canvas_height = (180 * canvas_scale) + canvas_margin
     canvas_width = (360 * canvas_scale) + canvas_margin
@@ -166,14 +174,14 @@ def visualise(road_map):
     canvas.pack()
     
     # Draw and Label the Lat/Long lines
-    canvas.create_line(canvas_width/2, 0+canvas_margin, canvas_width/2, canvas_height-canvas_margin, dash=(3,1))
-    canvas.create_line(0+canvas_margin, canvas_height/2, canvas_width-canvas_margin, canvas_height/2, dash=(3,1))
-    canvas.create_text(canvas_width/2, 0+(canvas_margin*0.75), text='Latitude')
-    canvas.create_text(0+canvas_margin, (canvas_height/2)-15, text='Longitude')
+    canvas.create_line(canvas_width/2, canvas_margin, canvas_width/2, canvas_height-canvas_margin, dash=(3,1))
+    canvas.create_line(canvas_margin, canvas_height/2, canvas_width-canvas_margin, canvas_height/2, dash=(3,1))
+    canvas.create_text(canvas_width/2, canvas_margin*0.75, text='Latitude')
+    canvas.create_text(canvas_margin-10, (canvas_height/2)-10, text='Longitude')
   
     # Latitude Markers - 90 degrees (with text)
-    canvas.create_line(canvas_width/2, 0+canvas_margin, (canvas_width/2)-5, 0+canvas_margin)
-    canvas.create_text((canvas_width/2)+13, 0+canvas_margin, text='+90')
+    canvas.create_line(canvas_width/2, canvas_margin, (canvas_width/2)-5, canvas_margin)
+    canvas.create_text((canvas_width/2)+13, canvas_margin, text='+90')
         
     canvas.create_line(canvas_width/2, canvas_height-canvas_margin, (canvas_width/2)-5, canvas_height-canvas_margin)
     canvas.create_text((canvas_width/2)+13, canvas_height-canvas_margin, text='-90')
@@ -184,8 +192,8 @@ def visualise(road_map):
     
     
     # Longitude Markers - 180 degrees (with text)
-    canvas.create_line(0+canvas_margin, canvas_height/2, 0+canvas_margin, (canvas_height/2)+5)
-    canvas.create_text(0+canvas_margin, (canvas_height/2)+10, text='-180')
+    canvas.create_line(canvas_margin, canvas_height/2, canvas_margin, (canvas_height/2)+5)
+    canvas.create_text(canvas_margin, (canvas_height/2)+10, text='-180')
     
     canvas.create_line(canvas_width-canvas_margin, canvas_height/2, canvas_width-canvas_margin, (canvas_height/2)+5)
     canvas.create_text(canvas_width-canvas_margin, (canvas_height/2)+10, text='+180')
@@ -199,12 +207,12 @@ def visualise(road_map):
     canvas.create_oval((canvas_width/2)-2 , (canvas_height/2)-2, (canvas_width/2)+2, (canvas_height/2)+2)
     
        
-    for state, city, lat, long in best_map:
-        #adj_x = 
-        #adj_y = 
-        canvas.create_oval(abs(long)-3, lat-3, abs(long)+3, lat+3)
-        canvas.create_text(abs(long)-5, lat-5, text=str(city))
-        #print(lat,long)
+    for state, city, lat, long in road_map: #change to best_map
+        adj_lat = (canvas_height/2) - (lat * canvas_scale)
+        adj_long = (canvas_width/2) + (long * canvas_scale)
+        canvas.create_oval(adj_long-15, adj_lat-15, adj_long+15, adj_lat+15)
+        canvas.create_text(adj_long-0, adj_lat-0, text=str(city), font="Times 8 italic")
+        print(lat,long)
         
     
     root.mainloop()
@@ -221,13 +229,14 @@ def main():
     try:    
         #print_cities(roadmap)
         #print(compute_total_distance(roadmap))
-        #print(swap_cities(roadmap,2,6))
+        #print(swap_cities(roadmap,2,60))
         #print(shift_cities(roadmap))
         #print(compute_total_distance(shift_cities(roadmap)))
         #print(find_best_cycle(roadmap))
-        #print('Note: visualise function opens in a new window.')
-        visualise(roadmap)
         #print_map(roadmap)
+        #print('Note: Visualise function opens in a new window.')
+        visualise(roadmap)
+        
     except Exception as e:
         print(str(e))
 
@@ -246,17 +255,12 @@ still to do
 best cycle: storing best map and best cycle outside of loop.
 more tests!
 visualise - adjusted coords, additional formatting etc.
-
 best map format, including distance. try not to use dataframe
 check all functions return what they are supposed to
 remove commented out code
-
-print_map - improve output
 better error classification
 coding style, check spacing etc (PEP8)
-
-C:/Users/samee/Documents/city-data-small.txt
-
 '''
 
-
+# C:\Users\samee\Documents\city-data-small.txt
+# C:\Users\samee\Documents\POP1\pop-one-project-skhan59\city-data.txt
