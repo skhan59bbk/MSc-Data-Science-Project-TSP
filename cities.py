@@ -7,29 +7,29 @@ def read_cities(file_name):
         f = open(file_name,'r')
         line = f.readline().rstrip()
     
-        road_map = dict()
+        road_map_dict = dict()
         
         while line:
             elements = line.split('\t')
-            road_map[(elements[0],elements[1])] = \
-            (round(float(elements[2]),2), round(float(elements[3]),2))
+            road_map_dict[(elements[0], elements[1])] = (float(elements[2]), float(elements[3]))
             line = f.readline().rstrip()
         f.close
-    
-        cities_list = [location + road_map[location] for location in road_map]
-        return cities_list
-   
-    except Exception as e:          ### Use custom type error messages ###
+  
+    except Exception as e:
         print(e)    
-    
+
+    cities_list = [location + road_map_dict[location] for location in road_map_dict]
+    return cities_list
+ 
     
 def print_cities(road_map):
     """
     Prints a list of cities, along with their locations. 
     Print only one or two digits after the decimal point.
-    """
-    print(road_map)
-    
+    """    
+    for city in road_map:
+        print('{}, {}, {}, {}'.format(city[0], city[1], round(city[2],2), round(city[3],2)))
+
 
 def compute_total_distance(road_map):
     """
@@ -40,9 +40,9 @@ def compute_total_distance(road_map):
     distances = []
 
     for i, city in enumerate(road_map):
-        from_x, to_x = road_map[(i-1) % len(road_map)][2], road_map[i][2]
-        from_y, to_y = road_map[(i-1) % len(road_map)][3], road_map[i][3]
-        distances.append(math.sqrt((from_x - to_x)**2 + (from_y - to_y)**2))
+        from_lat, to_lat = road_map[(i-1) % len(road_map)][2], road_map[i][2]
+        from_long, to_long = road_map[(i-1) % len(road_map)][3], road_map[i][3]
+        distances.append(math.sqrt((from_long - to_long)**2 + (from_lat - to_lat)**2))
 
     #cities_df = pd.DataFrame(road_map, columns=('State','City','Longitude','Latitude'))
     #cities_df['Distance'] = distances
@@ -162,7 +162,7 @@ def visualise(road_map):
     root = Tk()
     root.title("TSP: Best Map")
     
-    canvas_scale = 3
+    canvas_scale = 2
     canvas_margin = 50
     canvas_height = (180 * canvas_scale) + canvas_margin
     canvas_width = (360 * canvas_scale) + canvas_margin
@@ -173,39 +173,43 @@ def visualise(road_map):
     # Draw and Label the Lat/Long lines
     canvas.create_line(canvas_width/2, 0+canvas_margin, canvas_width/2, canvas_height-canvas_margin, dash=(3,1))
     canvas.create_line(0+canvas_margin, canvas_height/2, canvas_width-canvas_margin, canvas_height/2, dash=(3,1))
-    canvas.create_text(canvas_width/2,0+(canvas_margin*0.75), text='Latitude')
-    canvas.create_text(0+canvas_margin,(canvas_height/2)-15, text='Longitude')
+    canvas.create_text(canvas_width/2, 0+(canvas_margin*0.75), text='Latitude')
+    canvas.create_text(0+canvas_margin, (canvas_height/2)-15, text='Longitude')
+  
+    # Latitude Markers - 90 degrees (with text)
+    canvas.create_line(canvas_width/2, 0+canvas_margin, (canvas_width/2)-5, 0+canvas_margin)
+    canvas.create_text((canvas_width/2)+13, 0+canvas_margin, text='+90')
+        
+    canvas.create_line(canvas_width/2, canvas_height-canvas_margin, (canvas_width/2)-5, canvas_height-canvas_margin)
+    canvas.create_text((canvas_width/2)+13, canvas_height-canvas_margin, text='-90')
     
-    # Longitude Markers
+    # Latitude Markets- 45 degrees (no text)
+    canvas.create_line(canvas_width/2, (canvas_height/4)+(canvas_margin/2), (canvas_width/2)-5, (canvas_height/4)+(canvas_margin/2))
+    canvas.create_line(canvas_width/2, (canvas_height/4)*3-(canvas_margin/2), (canvas_width/2)-5, (canvas_height/4)*3-(canvas_margin/2))
+    
+    
+    # Longitude Markers - 180 degrees (with text)
     canvas.create_line(0+canvas_margin, canvas_height/2, 0+canvas_margin, (canvas_height/2)+5)
     canvas.create_text(0+canvas_margin, (canvas_height/2)+10, text='-180')
     
     canvas.create_line(canvas_width-canvas_margin, canvas_height/2, canvas_width-canvas_margin, (canvas_height/2)+5)
     canvas.create_text(canvas_width-canvas_margin, (canvas_height/2)+10, text='+180')
     
-    # Latitude Markers
-    canvas.create_line(canvas_width/2, 0+canvas_margin, (canvas_width/2)-5, 0+canvas_margin)
-    canvas.create_text((canvas_width/2)+13, 0+canvas_margin, text='+90')
+    # Longitude Markers - 90 degrees (no text)
+    canvas.create_line((canvas_width/4)+(canvas_margin/2), canvas_height/2, (canvas_width/4)+(canvas_margin/2), (canvas_height/2)+5)    
+    canvas.create_line((canvas_width/4)*3-(canvas_margin/2), canvas_height/2, (canvas_width/4)*3-(canvas_margin/2), (canvas_height/2)+5)    
     
-    canvas.create_line(canvas_width/2, canvas_height-canvas_margin, (canvas_width/2)-5, canvas_height-canvas_margin)
-    canvas.create_text((canvas_width/2)+13, canvas_height-canvas_margin, text='-90')
-    
+
     # Origin
     canvas.create_oval((canvas_width/2)-2 , (canvas_height/2)-2, (canvas_width/2)+2, (canvas_height/2)+2)
     
-    
-    lst = [(city,x,y) for (state,city,x,y) in road_map]
-    #print(lst)
-    
-    # normalise coords with ref to this grid
-    # add order, arrows?
-    
-    for city, x, y in lst:
+       
+    for state, city, lat, long in road_map:
         #adj_x = 
         #adj_y = 
-        canvas.create_oval(x-5,abs(y)-5,x+5,abs(y)+5)
-        canvas.create_text(x-5,abs(y)-5, text=city)
-        print(x,y)
+        canvas.create_oval(abs(long)-3, lat-3, abs(long)+3, lat+3)
+        canvas.create_text(abs(long)-5, lat-5, text=city)
+        #print(lat,long)
         
     
     root.mainloop()
@@ -216,19 +220,13 @@ def main():
     Reads in, and prints out, the city data, then creates the "best"
     cycle and prints it out.
     """
-    ## change read_cities to user input
     roadmap = read_cities('C:\\Users\\samee\\Documents\\city-data-small.txt')
-    #print('--->> Here is the original route (Distance: {}) <<---'.format(compute_total_distance(roadmap)))
     #print_cities(roadmap)
     #print(compute_total_distance(roadmap))
-    #visualise(roadmap)
-    #print(swap_cities(roadmap,24,31))
+    #print(swap_cities(roadmap,2,6))
     #print(compute_total_distance(shift_cities(roadmap)))
     #print(find_best_cycle(roadmap))
     visualise(roadmap)
-    #print('')
-    #print('--->> Here is a shorter route (Distance: {}) <<---'.format(find_best_cycle(roadmap)[0]))
-    #print(print_map(roadmap))
 
 
 
@@ -245,11 +243,14 @@ still to do
 
 best cycle: storing best map and best cycle outside of loop.
 more tests!
-visualise with tkinter
+visualise - adjusted coords, additional formatting etc.
 user input map file location
 best map format, including distance. try not to use dataframe
 check all functions return what they are supposed to
 remove commented out code
+swap cities 2dp output
+better error classification
+coding style, check spacing etc (PEP8)
 
 '''
 
