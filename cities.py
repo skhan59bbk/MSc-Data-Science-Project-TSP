@@ -26,7 +26,7 @@ def print_cities(road_map):
     Prints a list of cities, along with their locations. 
     Print only one or two digits after the decimal point.
     """    
-    print('---> The original map (total distance {}) <---'.format(compute_total_distance(road_map)))
+    print('*** THE ORIGINAL MAP (TOTAL DISTANCE {}) ***'.format(compute_total_distance(road_map)))
     for i, location in enumerate(road_map):
         print('{}. {}, {}: ({},{})'.format(i, location[1], \
               location[0], round(location[2],1), round(location[3],1)))
@@ -39,13 +39,7 @@ def compute_total_distance(road_map):
     the connections in the `road_map`. Remember that it's a cycle, so that 
     (for example) in the initial `road_map`, Wyoming connects to Alabama...
     """
-    distances = []
-
-    for i, city in enumerate(road_map):
-        from_lat, to_lat = road_map[(i-1) % len(road_map)][2], road_map[i][2]
-        from_long, to_long = road_map[(i-1) % len(road_map)][3], road_map[i][3]
-        distances.append(math.sqrt((from_long - to_long)**2 + (from_lat - to_lat)**2))
-
+    distances = distances_and_limits(road_map)[0]
     return round(sum(distances),2)
     
 
@@ -78,11 +72,8 @@ def shift_cities(road_map):
     to the position i+1. The city at the last position moves to the position
     0. Return the new road map. 
     """
-    shifted_road_map = []
     
-    for i, city in enumerate(road_map):
-        shifted_road_map.append(road_map[(i-1) % len(road_map)])
-
+    shifted_road_map = [road_map[(i-1) % len(road_map)] for i, city in enumerate(road_map)]
     return shifted_road_map
 
 
@@ -103,8 +94,10 @@ def find_best_cycle(road_map):
     #print('starting best cycle', best_cycle)
     i = 1
     
+    '''
     while i <= 10:
-        #try:  
+        #try:
+            random.seed(100)
             #attempt_map = road_map  ### AMEND THIS ####
             #print(i, 'best', best_cycle)
             #print(i, '### attempt map ###')
@@ -138,7 +131,16 @@ def find_best_cycle(road_map):
             #print('Error: '+str(e))
         #attempt_map = shift_cities(road_map)
         #i += 1
-    
+    '''
+    '''
+    while i <= 3:
+        print(best_map)
+        print(best_cycle)
+        print(attempt_map)
+        print(compute_total_distance(attempt_map))
+        attempt_map = shift_cities(attempt_map)
+        i+=1
+    '''
     #print('best dist:', compute_total_distance(best_map))
     #print('ending best: ', best_cycle)
     return best_cycle, best_map
@@ -151,69 +153,110 @@ def print_map(road_map):
     and the total cost.
     """
     best = find_best_cycle(road_map)
+    distances = distances_and_limits(best[1])[0]
 
-    print('---> The best map (total distance {}) <---'.format(best[0]))
-    for i, location in enumerate(best[1]):
-        print('{}. {}, {}'.format(i, location[1], location[0]))
+    print('*** THE BEST ROUTE FOUND (TOTAL DISTANCE {}) ***'.format(best[0]))
     print('')
 
+    for i, location in enumerate(best[1]):
+        print('{}, {} ----> {}, {}'.format(\
+              best[1][(i-1) % len(road_map)][1], best[1][(i-1) % len(road_map)][0], \
+              best[1][i][1], best[1][i][0]))
+        print('Distance = {}'.format(round(distances[i],2)))
+        print('')
 
+
+def distances_and_limits(road_map):
+    
+    distance_list = [math.sqrt((road_map[(i-1) % len(road_map)][3] - road_map[i][3])**2 + \
+                           (road_map[(i-1) % len(road_map)][2] - road_map[i][2])**2) \
+    for i, city in enumerate(road_map)]
+    
+    lats_list = [road_map[i][2] for i, city in enumerate(road_map)]
+    longs_list = [road_map[i][3] for i, city in enumerate(road_map)]
+    min_lat, max_lat = min(lats_list), max(lats_list)
+    min_long, max_long = min(longs_list), max(longs_list)
+
+    return distance_list, min_lat, max_lat, min_long, max_long
+    
 def visualise(road_map):
     
     #best_map = find_best_cycle(road_map)[1]
        
     root = Tk()
-    root.title("TSP: Best Map")
+    root.title("TSP: Best Route")
     
-    canvas_scale = 3
-    canvas_margin = 50
+    canvas_scale = 2
+    canvas_margin = 30
     canvas_height = (180 * canvas_scale) + canvas_margin
     canvas_width = (360 * canvas_scale) + canvas_margin
     
-    canvas = Canvas(root, width=canvas_width, height=canvas_height, bg='#EFCB9B')
-    canvas.pack()
+    ########### Canvas 1 ###########
+    canvas1 = Canvas(root, width=canvas_width, height=canvas_height, bg='#EFCB9B')
+    canvas1.pack()
+        
+    # Origin and Legend
+    canvas1.create_oval((canvas_width/2)-2 , (canvas_height/2)-2, (canvas_width/2)+2, (canvas_height/2)+2)
+    canvas1.create_text(canvas_width/8, 10, text='| WHOLE WORLD VIEW |', font='arial 10 bold')
     
     # Draw and Label the Lat/Long lines
-    canvas.create_line(canvas_width/2, canvas_margin, canvas_width/2, canvas_height-canvas_margin, dash=(3,1))
-    canvas.create_line(canvas_margin, canvas_height/2, canvas_width-canvas_margin, canvas_height/2, dash=(3,1))
-    canvas.create_text(canvas_width/2, canvas_margin*0.75, text='Latitude')
-    canvas.create_text(canvas_margin-10, (canvas_height/2)-10, text='Longitude')
+    canvas1.create_line(canvas_width/2, canvas_margin, canvas_width/2, canvas_height-canvas_margin, dash=(3,1))
+    canvas1.create_line(canvas_margin, canvas_height/2, canvas_width-canvas_margin, canvas_height/2, dash=(3,1))
+    canvas1.create_text(canvas_width/2, canvas_margin*0.65, text='Latitude', font='arial 8 italic')
+    canvas1.create_text(canvas_margin+5, (canvas_height/2)-10, text='Longitude', font='arial 8 italic')
   
     # Latitude Markers - 90 degrees (with text)
-    canvas.create_line(canvas_width/2, canvas_margin, (canvas_width/2)-5, canvas_margin)
-    canvas.create_text((canvas_width/2)+13, canvas_margin, text='+90')
+    canvas1.create_line(canvas_width/2, canvas_margin, (canvas_width/2)-5, canvas_margin)
+    canvas1.create_text((canvas_width/2)+13, canvas_margin, text='+90')
         
-    canvas.create_line(canvas_width/2, canvas_height-canvas_margin, (canvas_width/2)-5, canvas_height-canvas_margin)
-    canvas.create_text((canvas_width/2)+13, canvas_height-canvas_margin, text='-90')
+    canvas1.create_line(canvas_width/2, canvas_height-canvas_margin, (canvas_width/2)-5, canvas_height-canvas_margin)
+    canvas1.create_text((canvas_width/2)+13, canvas_height-canvas_margin, text='-90')
     
     # Latitude Markets- 45 degrees (no text)
-    canvas.create_line(canvas_width/2, (canvas_height/4)+(canvas_margin/2), (canvas_width/2)-5, (canvas_height/4)+(canvas_margin/2))
-    canvas.create_line(canvas_width/2, (canvas_height/4)*3-(canvas_margin/2), (canvas_width/2)-5, (canvas_height/4)*3-(canvas_margin/2))
-    
-    
+    canvas1.create_line(canvas_width/2, (canvas_height/4)+(canvas_margin/2), (canvas_width/2)-5, (canvas_height/4)+(canvas_margin/2))
+    canvas1.create_line(canvas_width/2, (canvas_height/4)*3-(canvas_margin/2), (canvas_width/2)-5, (canvas_height/4)*3-(canvas_margin/2))
+        
     # Longitude Markers - 180 degrees (with text)
-    canvas.create_line(canvas_margin, canvas_height/2, canvas_margin, (canvas_height/2)+5)
-    canvas.create_text(canvas_margin, (canvas_height/2)+10, text='-180')
+    canvas1.create_line(canvas_margin, canvas_height/2, canvas_margin, (canvas_height/2)+5)
+    canvas1.create_text(canvas_margin, (canvas_height/2)+10, text='-180')
     
-    canvas.create_line(canvas_width-canvas_margin, canvas_height/2, canvas_width-canvas_margin, (canvas_height/2)+5)
-    canvas.create_text(canvas_width-canvas_margin, (canvas_height/2)+10, text='+180')
+    canvas1.create_line(canvas_width-canvas_margin, canvas_height/2, canvas_width-canvas_margin, (canvas_height/2)+5)
+    canvas1.create_text(canvas_width-canvas_margin, (canvas_height/2)+10, text='+180')
     
     # Longitude Markers - 90 degrees (no text)
-    canvas.create_line((canvas_width/4)+(canvas_margin/2), canvas_height/2, (canvas_width/4)+(canvas_margin/2), (canvas_height/2)+5)    
-    canvas.create_line((canvas_width/4)*3-(canvas_margin/2), canvas_height/2, (canvas_width/4)*3-(canvas_margin/2), (canvas_height/2)+5)    
-    
+    canvas1.create_line((canvas_width/4)+(canvas_margin/2), canvas_height/2, (canvas_width/4)+(canvas_margin/2), (canvas_height/2)+5)    
+    canvas1.create_line((canvas_width/4)*3-(canvas_margin/2), canvas_height/2, (canvas_width/4)*3-(canvas_margin/2), (canvas_height/2)+5)    
 
-    # Origin
-    canvas.create_oval((canvas_width/2)-2 , (canvas_height/2)-2, (canvas_width/2)+2, (canvas_height/2)+2)
-    
-       
+    # Rescale and Draw Cities
     for state, city, lat, long in road_map: #change to best_map
         adj_lat = (canvas_height/2) - (lat * canvas_scale)
         adj_long = (canvas_width/2) + (long * canvas_scale)
-        canvas.create_oval(adj_long-15, adj_lat-15, adj_long+15, adj_lat+15)
-        canvas.create_text(adj_long-0, adj_lat-0, text=str(city), font="Times 8 italic")
-        print(lat,long)
+        canvas1.create_oval(adj_long-2, adj_lat-2, adj_long+2, adj_lat+2, fill='red')
+        #canvas.create_text(adj_long-0, adj_lat-0, text=str(city), font="Times 8 italic")
+        #print(lat,long)
         
+        
+    ########### Canvas 2 ###########
+    canvas2 = Canvas(root, width=canvas_width, height=canvas_height, bg='#EFCB9B')
+    canvas2.pack()   
+    
+    # Origin and legend
+    canvas2.create_oval(canvas_width-canvas_margin-3, canvas_height-canvas_margin-3, canvas_width-canvas_margin+3, canvas_height-canvas_margin+3)
+    canvas2.create_text(canvas_width/8, 10, text='| ZOOMED IN VIEW |', font='arial 10 bold')   
+
+    
+    # Rescale and Draw Cities
+    for state, city, lat, long in road_map: #change to best_map
+        #adj_lat_zoom = canvas_height/2 - (lat * canvas_scale)
+        adj_lat_zoom = canvas_height - (lat/90 * canvas_height)
+        #adj_long_zoom = canvas_width/2 + (long * canvas_scale)
+        adj_long_zoom = canvas_width - (-long/180 * canvas_width)
+        canvas2.create_oval(adj_long_zoom-3, adj_lat_zoom-3, adj_long_zoom+3, adj_lat_zoom+3, fill='blue')
+        print((lat, long), (adj_lat_zoom, adj_long_zoom))
+        
+    canvas2.create_oval(200,200,210,210)
+    canvas2.create_oval(300,300,310,310)
+    canvas2.create_oval(100,100,110,110)   
     
     root.mainloop()
 
@@ -234,8 +277,9 @@ def main():
         #print(compute_total_distance(shift_cities(roadmap)))
         #print(find_best_cycle(roadmap))
         #print_map(roadmap)
+        #print(distances_and_limits(roadmap))
         #print('Note: Visualise function opens in a new window.')
-        visualise(roadmap)
+        #visualise(roadmap)
         
     except Exception as e:
         print(str(e))
@@ -252,14 +296,16 @@ if __name__ == "__main__":
 ''' 
 still to do
 
-best cycle: storing best map and best cycle outside of loop.
-more tests!
-visualise - adjusted coords, additional formatting etc.
-best map format, including distance. try not to use dataframe
-check all functions return what they are supposed to
-remove commented out code
+best cycle - storing best map and best cycle outside of loop.
+visualise - relevant dimensions only, additional formatting etc.
+
+
+before submitting
+
+more tests?
 better error classification
-coding style, check spacing etc (PEP8)
+check all functions return what they are supposed to
+coding style, remove commented out code, check spacing etc
 '''
 
 # C:\Users\samee\Documents\city-data-small.txt
