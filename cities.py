@@ -88,61 +88,36 @@ def find_best_cycle(road_map):
     best_map = road_map
     attempt_map = road_map
     best_cycle = compute_total_distance(best_map)
-    #print('starting best: ', best_cycle)
-    #print('computed best: ', compute_total_distance(best_map))
-    #print('starting map', [(i, city) for (i, city) in enumerate(attempt_map)])
-    #print('starting best cycle', best_cycle)
+
     i = 1
     
-    '''
-    while i <= 10:
+    
+    while i <= 10000:
         #try:
-            random.seed(100)
-            #attempt_map = road_map  ### AMEND THIS ####
-            #print(i, 'best', best_cycle)
-            #print(i, '### attempt map ###')
             #print([(num, city) for (num, city) in enumerate(attempt_map)])
-            #print(i, 'best cycle so far', best_cycle)
             rand_idx1 = random.randint(0, len(best_map)-1)
             rand_idx2 = random.randint(0, len(best_map)-1)
             #print(i, rand_idx1, rand_idx2)
-            (new_map, distance) = swap_cities(best_map, rand_idx1, rand_idx2)
+            (new_map, distance) = swap_cities(attempt_map, rand_idx1, rand_idx2)
             #print('new_map', new_map)
-            print('new dist', distance)
-            print('before checking against new dist, best cycle: ', best_cycle)
+            #print('new dist', distance)
+            #print('before checking against new dist, best cycle: ', best_cycle)
             if distance < best_cycle:
-                #best_cycle = distance
-                print('distance updated', best_cycle, distance)
+                best_cycle = distance
+                #print('distance updated', best_cycle, distance)
                 best_map = new_map
-                #print('### best map ###', compute_total_distance(best_map), best_cycle)
-                #print([(num, city) for (num, city) in enumerate(best_map)])
-                #attempt_map = best_map
-                #print('### new attempt map ###', compute_total_distance(best_map))
-                #print([(num, city) for (num, city) in enumerate(attempt_map)])        
+                attempt_map = new_map      
             else:
-                #print('#### No better. now map has shifted. ####')
-                #print('### best map unchanged ###', compute_total_distance(best_map), best_cycle)
-                #print('best map --> ', [(num, city) for (num, city) in enumerate(best_map)])  
-                best_map = shift_cities(new_map) 
-                #print('attempt map -->',[(num, city) for (num, city) in enumerate(attempt_map)])
-            #print('attempt map updated with new map?', attempt_map == new_map)
+                #print('#### No better. now map has shifted. ####') 
+                attempt_map = shift_cities(new_map) 
+
             i += 1
         #except Exception as e:
             #print('Error: '+str(e))
         #attempt_map = shift_cities(road_map)
         #i += 1
-    '''
-    '''
-    while i <= 3:
-        print(best_map)
-        print(best_cycle)
-        print(attempt_map)
-        print(compute_total_distance(attempt_map))
-        attempt_map = shift_cities(attempt_map)
-        i+=1
-    '''
-    #print('best dist:', compute_total_distance(best_map))
-    #print('ending best: ', best_cycle)
+    
+
     return best_cycle, best_map
 
 
@@ -197,7 +172,7 @@ def visualise(road_map):
         
     # Origin and Legend
     canvas1.create_oval((canvas_width/2)-2 , (canvas_height/2)-2, (canvas_width/2)+2, (canvas_height/2)+2, fill='black')
-    canvas1.create_text(canvas_width/8, 10, text='| WHOLE WORLD VIEW |', font='arial 10 bold')
+    canvas1.create_text(canvas_width/4, 10, text='| WHOLE WORLD VIEW |', font='arial 10 bold')
     
     # Draw and Label the Lat/Long lines
     canvas1.create_line(canvas_width/2, canvas_margin, canvas_width/2, canvas_height-canvas_margin, dash=(3,1))
@@ -249,13 +224,21 @@ def visualise(road_map):
     
     # Origin and legend
     canvas2.create_oval(canvas_width-canvas_margin-1, canvas_height-canvas_margin-1, canvas_width-canvas_margin+1, canvas_height-canvas_margin+1)
-    canvas2.create_text(canvas_width/8, 10, text='| ZOOMED IN VIEW |', font='arial 10 bold')   
+    canvas2.create_text(canvas_width/4, 10, text='| ZOOMED IN VIEW |', font='arial 10 bold')   
     
     # Draw Lat/Long lines
     canvas2.create_line(canvas_width-canvas_margin, canvas_margin, canvas_width-canvas_margin, canvas_height-canvas_margin, dash=(5,2))
     canvas2.create_line(canvas_margin, canvas_height-canvas_margin, canvas_width-canvas_margin, canvas_height-canvas_margin, dash=(5,2))
     canvas2.create_line(canvas_margin, canvas_margin, canvas_margin, canvas_height-canvas_margin, dash=(5,2))
     canvas2.create_line(canvas_margin, canvas_margin, canvas_width-canvas_margin, canvas_margin, dash=(5,2))
+    
+    # Inner Grid
+    for i in range(2, int(canvas_height/canvas_margin)-1):
+        canvas2.create_line(canvas_margin, canvas_margin*i, canvas_width-canvas_margin, canvas_margin*i, fill='grey', dash=(4,2))
+
+    for i in range(2, int(canvas_width/canvas_margin)-1):
+        canvas2.create_line(canvas_margin*i, canvas_margin, canvas_margin*i, canvas_height-canvas_margin, fill='grey', dash=(4,2))
+        
     
     # Latitude Markers and Text
     canvas2.create_line(canvas_width-canvas_margin, canvas_height-(canvas_margin*2), (canvas_width-canvas_margin)+5, canvas_height-(canvas_margin*2))
@@ -293,7 +276,8 @@ def visualise(road_map):
         
     canvas2.create_oval(200,200,210,210)
     canvas2.create_oval(300,300,310,310)
-    canvas2.create_oval(100,100,110,110)   
+    canvas2.create_oval(100,100,110,110)  
+    canvas2.create_oval(canvas_margin-5,canvas_margin-5,canvas_margin+5,canvas_margin+5)
     
     root.mainloop()
 
@@ -312,11 +296,11 @@ def main():
         #print(swap_cities(roadmap,2,60))
         #print(shift_cities(roadmap))
         #print(compute_total_distance(shift_cities(roadmap)))
-        #print(find_best_cycle(roadmap))
+        print(find_best_cycle(roadmap))
         #print_map(roadmap)
         #print(distances_and_limits(roadmap))
         #print('Note: Visualise function opens in a new window.')
-        visualise(roadmap)
+        #visualise(roadmap)
         
     except Exception as e:
         print(str(e))
@@ -333,8 +317,9 @@ if __name__ == "__main__":
 ''' 
 still to do
 
-best cycle - storing best map and best cycle outside of loop.
+best cycle - when distance isnt better - update relevant maps.
 visualise - relevant dimensions only, additional formatting etc.
+replace road_map with best_map where applicable
 
 
 before submitting
