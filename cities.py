@@ -191,12 +191,12 @@ def visualise(road_map):
     canvas_height = (180 * canvas_scale) + canvas_margin
     canvas_width = (360 * canvas_scale) + canvas_margin
     
-    ########### Canvas 1 ###########
+    ########### Canvas 1 - WORLD VIEW ###########
     canvas1 = Canvas(root, width=canvas_width, height=canvas_height, bg='#EFCB9B')
     canvas1.pack()
         
     # Origin and Legend
-    canvas1.create_oval((canvas_width/2)-2 , (canvas_height/2)-2, (canvas_width/2)+2, (canvas_height/2)+2)
+    canvas1.create_oval((canvas_width/2)-2 , (canvas_height/2)-2, (canvas_width/2)+2, (canvas_height/2)+2, fill='black')
     canvas1.create_text(canvas_width/8, 10, text='| WHOLE WORLD VIEW |', font='arial 10 bold')
     
     # Draw and Label the Lat/Long lines
@@ -236,22 +236,59 @@ def visualise(road_map):
         #print(lat,long)
         
         
-    ########### Canvas 2 ###########
+    ########### Canvas 2 - ZOOMED IN ###########
     canvas2 = Canvas(root, width=canvas_width, height=canvas_height, bg='#EFCB9B')
-    canvas2.pack()   
+    canvas2.pack()
+    
+    limits = distances_and_limits(road_map)[1:]
+    min_lat, max_lat = limits[0], limits[1]
+    min_long, max_long = limits[2], limits[3]
+    
+    lat_axis_length = max_lat - min_lat
+    long_axis_length = max_long - min_long
     
     # Origin and legend
-    canvas2.create_oval(canvas_width-canvas_margin-3, canvas_height-canvas_margin-3, canvas_width-canvas_margin+3, canvas_height-canvas_margin+3)
+    canvas2.create_oval(canvas_width-canvas_margin-1, canvas_height-canvas_margin-1, canvas_width-canvas_margin+1, canvas_height-canvas_margin+1)
     canvas2.create_text(canvas_width/8, 10, text='| ZOOMED IN VIEW |', font='arial 10 bold')   
-
+    
+    # Draw Lat/Long lines
+    canvas2.create_line(canvas_width-canvas_margin, canvas_margin, canvas_width-canvas_margin, canvas_height-canvas_margin, dash=(5,2))
+    canvas2.create_line(canvas_margin, canvas_height-canvas_margin, canvas_width-canvas_margin, canvas_height-canvas_margin, dash=(5,2))
+    canvas2.create_line(canvas_margin, canvas_margin, canvas_margin, canvas_height-canvas_margin, dash=(5,2))
+    canvas2.create_line(canvas_margin, canvas_margin, canvas_width-canvas_margin, canvas_margin, dash=(5,2))
+    
+    # Latitude Markers and Text
+    canvas2.create_line(canvas_width-canvas_margin, canvas_height-(canvas_margin*2), (canvas_width-canvas_margin)+5, canvas_height-(canvas_margin*2))
+    canvas2.create_text(canvas_width-canvas_margin+15, canvas_height-(canvas_margin*2), text=str(round(min_lat)), font='arial 7 italic')
+    
+    canvas2.create_line(canvas_width-canvas_margin, canvas_margin*2, (canvas_width-canvas_margin)+5, canvas_margin*2)    
+    canvas2.create_text(canvas_width-canvas_margin+15, canvas_margin*2, text=str(round(max_lat)), font='arial 7 italic')
+    
+    canvas2.create_line(canvas_margin, canvas_height-(canvas_margin*2), canvas_margin-5, canvas_height-(canvas_margin)*2)
+    canvas2.create_text(canvas_margin-20, canvas_height-(canvas_margin*2), text=str(round(min_lat)), font='arial 7 italic')
+    
+    canvas2.create_line(canvas_margin, canvas_margin*2, canvas_margin-5, canvas_margin*2)
+    canvas2.create_text(canvas_margin-20, canvas_margin*2, text=str(round(max_lat)), font='arial 7 italic')
+    
+    
+    # Longitude Markers and Text
+    canvas2.create_line(canvas_margin*2, canvas_height-canvas_margin, canvas_margin*2, (canvas_height-canvas_margin)+5)
+    canvas2.create_text(canvas_margin*2, canvas_height-canvas_margin+10, text=str(round(min_long)), font='arial 7 italic')
+    
+    canvas2.create_line(canvas_margin*2, canvas_margin, canvas_margin*2, canvas_margin-5)
+    canvas2.create_text(canvas_margin*2, canvas_margin-10, text=str(round(min_long)), font='arial 7 italic')
+    
+    canvas2.create_line(canvas_width-(canvas_margin*2), canvas_height-canvas_margin, canvas_width-(canvas_margin*2), (canvas_height-canvas_margin)+5)
+    canvas2.create_text(canvas_width-(canvas_margin*2), canvas_height-canvas_margin+10, text=str(round(max_long)), font='arial 7 italic')
+    
+    canvas2.create_line(canvas_width-(canvas_margin*2), canvas_margin, canvas_width-(canvas_margin*2), canvas_margin-5)
+    canvas2.create_text(canvas_width-(canvas_margin*2), canvas_margin-10, text=str(round(max_long)), font='arial 7 italic')
     
     # Rescale and Draw Cities
     for state, city, lat, long in road_map: #change to best_map
-        #adj_lat_zoom = canvas_height/2 - (lat * canvas_scale)
         adj_lat_zoom = canvas_height - (lat/90 * canvas_height)
-        #adj_long_zoom = canvas_width/2 + (long * canvas_scale)
         adj_long_zoom = canvas_width - (-long/180 * canvas_width)
-        canvas2.create_oval(adj_long_zoom-3, adj_lat_zoom-3, adj_long_zoom+3, adj_lat_zoom+3, fill='blue')
+        canvas2.create_oval(adj_long_zoom-3, adj_lat_zoom-3, adj_long_zoom+3, adj_lat_zoom+3, fill='red')
         print((lat, long), (adj_lat_zoom, adj_long_zoom))
         
     canvas2.create_oval(200,200,210,210)
@@ -279,7 +316,7 @@ def main():
         #print_map(roadmap)
         #print(distances_and_limits(roadmap))
         #print('Note: Visualise function opens in a new window.')
-        #visualise(roadmap)
+        visualise(roadmap)
         
     except Exception as e:
         print(str(e))
