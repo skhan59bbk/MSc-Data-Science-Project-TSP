@@ -63,7 +63,7 @@ def swap_cities(road_map, index1, index2):
         return (new_road_map, compute_total_distance(new_road_map))
     
     except Exception as e:
-        print('Error swapping cities: '+str(e))
+        print('Error with swap_cities function: '+str(e))
 
 
 def shift_cities(road_map):
@@ -86,38 +86,22 @@ def find_best_cycle(road_map):
     """
     
     best_map = road_map
-    attempt_map = road_map
     best_cycle = compute_total_distance(best_map)
-
-    i = 1
-    
-    
-    while i <= 10000:
-        #try:
-            #print([(num, city) for (num, city) in enumerate(attempt_map)])
+    i = 0
+        
+    while i < 10000:
+        try:
+            attempt_map = shift_cities(best_map)
             rand_idx1 = random.randint(0, len(best_map)-1)
             rand_idx2 = random.randint(0, len(best_map)-1)
-            #print(i, rand_idx1, rand_idx2)
             (new_map, distance) = swap_cities(attempt_map, rand_idx1, rand_idx2)
-            #print('new_map', new_map)
-            #print('new dist', distance)
-            #print('before checking against new dist, best cycle: ', best_cycle)
             if distance < best_cycle:
                 best_cycle = distance
-                #print('distance updated', best_cycle, distance)
                 best_map = new_map
-                attempt_map = new_map      
-            else:
-                #print('#### No better. now map has shifted. ####') 
-                attempt_map = shift_cities(new_map) 
-
             i += 1
-        #except Exception as e:
-            #print('Error: '+str(e))
-        #attempt_map = shift_cities(road_map)
-        #i += 1
-    
-
+        except Exception as e:
+            print('Error with find_best_cycle function: '+str(e))
+   
     return best_cycle, best_map
 
 
@@ -134,7 +118,7 @@ def print_map(road_map):
     print('')
 
     for i, location in enumerate(best[1]):
-        print('{}, {} ----> {}, {}'.format(\
+        print('Trip #{}: {}, {} ----> {}, {}'.format(i+1, \
               best[1][(i-1) % len(road_map)][1], best[1][(i-1) % len(road_map)][0], \
               best[1][i][1], best[1][i][0]))
         print('Distance = {}'.format(round(distances[i],2)))
@@ -296,8 +280,8 @@ def main():
         #print(swap_cities(roadmap,2,60))
         #print(shift_cities(roadmap))
         #print(compute_total_distance(shift_cities(roadmap)))
-        print(find_best_cycle(roadmap))
-        #print_map(roadmap)
+        #print(find_best_cycle(roadmap))
+        print_map(roadmap)
         #print(distances_and_limits(roadmap))
         #print('Note: Visualise function opens in a new window.')
         #visualise(roadmap)
@@ -317,7 +301,6 @@ if __name__ == "__main__":
 ''' 
 still to do
 
-best cycle - when distance isnt better - update relevant maps.
 visualise - relevant dimensions only, additional formatting etc.
 replace road_map with best_map where applicable
 
