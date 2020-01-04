@@ -327,8 +327,3 @@ def main():
 
 if __name__ == "__main__": 
     main()
-
-
-
-# C:\Users\samee\Documents\city-data-small.txt
-# C:\Users\samee\Documents\POP1\pop-one-project-skhan59\city-data.txt
