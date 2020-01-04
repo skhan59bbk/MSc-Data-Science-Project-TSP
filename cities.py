@@ -17,31 +17,37 @@ def read_cities(file_name):
         
         return cities_list
   
-    except Exception:
+    except Exception as e:
         print('>> ERROR: Unable to find file! Please check location and try again. <<')
            
 def print_cities(road_map):
     """
     Prints a list of cities, along with their locations. 
     """    
-    
+
     print('*** THE ORIGINAL MAP (TOTAL DISTANCE {}) ***'.format(compute_total_distance(road_map)))
     print('')
     for i, location in enumerate(road_map):
-        print('- {}, {}: ({},{})'.format(location[1], \
-              location[0], round(location[2],1), round(location[3],1)))
+        try:
+            print('- {}, {}: ({},{})'.format(location[1], \
+                  location[0], round(location[2],1), round(location[3],1)))
+        except Exception as e:
+            print('Error with print_cities: '+str(e))
     print('____________________________________________________________________')
     print('')
-    
+   
 def compute_total_distance(road_map):
     """
     Returns, as a floating point number, the sum of the distances of all 
     the connections in the `road_map`. 
     """
     
-    distances = distances_and_limits(road_map)[0]
-    return round(sum(distances),2)
-    
+    try:
+        distances = distances_and_limits(road_map)[0]
+        return round(sum(distances),2)
+    except Exception as e:
+        print(str(e))
+        
 def swap_cities(road_map, index1, index2):
     """
     Take the city at location `index` in the `road_map`, and the 
@@ -80,9 +86,10 @@ def find_best_cycle(road_map):
     best_cycle = road_map
     best_dist = compute_total_distance(best_cycle)
     i = 0
-        
-    while i < 10000:
-        try:
+    
+    try:    
+        while i < 10000:
+        #try:
             attempt_map = shift_cities(best_cycle)
             rand_idx1 = random.randint(0, len(best_cycle)-1)
             rand_idx2 = random.randint(0, len(best_cycle)-1)
@@ -91,8 +98,8 @@ def find_best_cycle(road_map):
                 best_dist = distance
                 best_cycle = new_map
             i += 1
-        except Exception as e:
-            print('Error with find_best_cycle function: '+str(e))
+    except Exception as e:
+        print('Error with find_best_cycle function: '+str(e))
    
     return best_cycle
 
@@ -132,8 +139,11 @@ def distances_and_limits(road_map):
     
     min_lat, max_lat = min(lats_list), max(lats_list)
     min_long, max_long = min(longs_list), max(longs_list)
-
-    return distance_list, min_lat, max_lat, min_long, max_long
+    
+    if min_lat < -90 or max_lat > 90 or min_long < -180 or max_long > 180:
+        raise Exception("Please check the latitude and longitude values in your map.")
+    else:
+        return distance_list, min_lat, max_lat, min_long, max_long
     
 def visualise(road_map):
     """
@@ -304,13 +314,12 @@ def main():
     cycle and prints it out.
     """
     
-    roadmap = read_cities(input('Please enter the file location: '))
-    print('')
-    print_cities(roadmap)
-    best = find_best_cycle(roadmap)
-    print_map(best)
-    
     try:
+        roadmap = read_cities(input('Please enter the file location: '))
+        print('')
+        print_cities(roadmap)
+        best = find_best_cycle(roadmap)
+        print_map(best)
         run_viz = input('>> Run visualisation function? (Y/N): ')
         print('')
         while run_viz != 'N':
