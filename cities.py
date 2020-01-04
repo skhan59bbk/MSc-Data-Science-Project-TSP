@@ -19,8 +19,7 @@ def read_cities(file_name):
   
     except Exception:
         print('>> ERROR: Unable to find file! Please check location and try again. <<')
-        
-    
+           
 def print_cities(road_map):
     """
     Prints a list of cities, along with their locations. 
@@ -29,12 +28,11 @@ def print_cities(road_map):
     print('*** THE ORIGINAL MAP (TOTAL DISTANCE {}) ***'.format(compute_total_distance(road_map)))
     print('')
     for i, location in enumerate(road_map):
-        print('{}. {}, {}: ({},{})'.format(i, location[1], \
+        print('- {}, {}: ({},{})'.format(location[1], \
               location[0], round(location[2],1), round(location[3],1)))
     print('____________________________________________________________________')
     print('')
     
-
 def compute_total_distance(road_map):
     """
     Returns, as a floating point number, the sum of the distances of all 
@@ -44,7 +42,6 @@ def compute_total_distance(road_map):
     distances = distances_and_limits(road_map)[0]
     return round(sum(distances),2)
     
-
 def swap_cities(road_map, index1, index2):
     """
     Take the city at location `index` in the `road_map`, and the 
@@ -62,7 +59,6 @@ def swap_cities(road_map, index1, index2):
     except Exception as e:
         print('Error with swap_cities function: '+str(e))
 
-
 def shift_cities(road_map):
     """
     For every index i in the `road_map`, the city at the position i moves
@@ -72,7 +68,6 @@ def shift_cities(road_map):
     
     shifted_road_map = [road_map[(i-1) % len(road_map)] for i, city in enumerate(road_map)]
     return shifted_road_map
-
 
 def find_best_cycle(road_map):
     """
@@ -101,7 +96,6 @@ def find_best_cycle(road_map):
    
     return best_cycle
 
-
 def print_map(road_map):
     """
     Prints, in an easily understandable format, the cities and 
@@ -109,16 +103,15 @@ def print_map(road_map):
     and the total cost.
     """
     
-    best = find_best_cycle(road_map)
-    distances = distances_and_limits(best)[0]
+    distances = distances_and_limits(road_map)[0]
 
     print('*** THE BEST ROUTE FOUND (TOTAL DISTANCE {}) ***'.format(round(sum(distances),1)))
     print('')
 
-    for i, location in enumerate(best):
+    for i, location in enumerate(road_map):
         print('Trip #{}: {}, {} ----> {}, {}'.format(i+1, \
-              best[(i-1) % len(road_map)][1], best[(i-1) % len(road_map)][0], \
-              best[i][1], best[i][0]))
+              road_map[(i-1) % len(road_map)][1], road_map[(i-1) % len(road_map)][0], \
+              road_map[i][1], road_map[i][0]))
         print('Distance = {}'.format(round(distances[i],2)))
         print('')
     print('____________________________________________________________________')
@@ -146,22 +139,20 @@ def visualise(road_map):
     """
     Visualisation of route using tkinter module
     """
-    
-    best_map = find_best_cycle(road_map)
 
     canvas_scale = 3
     canvas_margin = 30
     canvas_height = (180 * canvas_scale) + canvas_margin
     canvas_width = (360 * canvas_scale) + canvas_margin
    
-    limits = distances_and_limits(best_map)[1:]
+    limits = distances_and_limits(road_map)[1:]
     min_lat, max_lat = limits[0], limits[1]
     min_long, max_long = limits[2], limits[3]
        
     
     ''' Canvas 1  '''
     frame1 = Tk()
-    frame1.title("Traveling Salesman Problem | Best Route | Full Scale View | Total Distance: {}".format(compute_total_distance(best_map)))
+    frame1.title("Traveling Salesman Problem | Best Route | Full Scale View | Total Distance: {}".format(compute_total_distance(road_map)))
 
     canvas1 = Canvas(frame1, width = canvas_width, \
                      height = canvas_height, bg='#FCEDBD')
@@ -209,12 +200,12 @@ def visualise(road_map):
     long_adj_factor1 = (canvas_width-(canvas_margin*2)) / 360
     
     # Rescale and Draw Cities
-    for i, location in enumerate(best_map):
+    for i, location in enumerate(road_map):
         adj_lat = canvas_height - canvas_margin - ((location[2]-(-90)) * lat_adj_factor1)
         adj_long = canvas_margin + ((location[3]-(-180)) * long_adj_factor1)
         canvas1.create_oval(adj_long-3, adj_lat-3, adj_long+3, adj_lat+3, fill='red')
 
-        prev_lat, prev_long = best_map[(i-1)%len(best_map)][2], best_map[(i-1)%len(best_map)][3]
+        prev_lat, prev_long = road_map[(i-1)%len(road_map)][2], road_map[(i-1)%len(road_map)][3]
         adj_prev_lat = canvas_height - canvas_margin - ((prev_lat-(-90)) * lat_adj_factor1)
         adj_prev_long = canvas_margin + ((prev_long-(-180)) * long_adj_factor1)
         canvas1.create_line(adj_prev_long, adj_prev_lat, adj_long, adj_lat, arrow='last', fill='green')
@@ -222,7 +213,7 @@ def visualise(road_map):
                 
     ''' Canvas 2 - ZOOMED IN '''
     frame2 = Tk()
-    frame2.title("Traveling Salesman Problem | Best Route | Zoomed In View | Total Distance: {}".format(compute_total_distance(best_map)))
+    frame2.title("Traveling Salesman Problem | Best Route | Zoomed In View | Total Distance: {}".format(compute_total_distance(road_map)))
     
     canvas2 = Canvas(frame2, width = canvas_width, \
                      height = canvas_height, bg='#FCEDBD') 
@@ -292,22 +283,20 @@ def visualise(road_map):
     canvas2.create_text(canvas_width/2, canvas_margin-10, text=str(mid_long), font='arial 8 italic')
     
     # Rescale and Draw Cities
-    for i, location in enumerate(best_map):
+    for i, location in enumerate(road_map):
         adj_lat_zoom = (canvas_height - (2*canvas_margin)) - ((location[2]-min_lat) * lat_adj_factor2)
         adj_long_zoom = (canvas_margin*2) + ((location[3]-min_long) * long_adj_factor2)
         canvas2.create_oval(adj_long_zoom-11, adj_lat_zoom-11, adj_long_zoom+11, adj_lat_zoom+11, fill='#EC7068')
         canvas2.create_text(adj_long_zoom, adj_lat_zoom, text=str(i), font='arial 12 bold')
         canvas2.create_text(adj_long_zoom, adj_lat_zoom-18, text=str(location[1]), font='arial 9')
         
-        prev_lat, prev_long = best_map[(i-1)%len(best_map)][2], best_map[(i-1)%len(best_map)][3]
+        prev_lat, prev_long = road_map[(i-1)%len(road_map)][2], road_map[(i-1)%len(road_map)][3]
         adj_prev_lat = (canvas_height - (2*canvas_margin)) - ((prev_lat-min_lat) * lat_adj_factor2)
         adj_prev_long = (canvas_margin*2) + ((prev_long-min_long) * long_adj_factor2)
         canvas2.create_line(adj_prev_long, adj_prev_lat+3, adj_long_zoom, adj_lat_zoom+3, arrow='last', fill='green', width=1)
-        
-    
+            
     frame1.mainloop()
     frame2.mainloop()
-
 
 def main():
     """
@@ -318,7 +307,8 @@ def main():
     roadmap = read_cities(input('Please enter the file location: '))
     print('')
     print_cities(roadmap)
-    print_map(roadmap)
+    best = find_best_cycle(roadmap)
+    print_map(best)
     
     try:
         run_viz = input('>> Run visualisation function? (Y/N): ')
@@ -326,7 +316,7 @@ def main():
         while run_viz != 'N':
             if run_viz == 'Y':
                 print('Two windows opened. Please close to end.')
-                visualise(roadmap)
+                visualise(best)
                 break
             else:
                 print('Please type only Y or N')
@@ -339,17 +329,6 @@ if __name__ == "__main__":
     main()
 
 
-
-
-
-''' 
-before submitting
-
-more tests?
-better error classification
-check all functions return what they are supposed to
-coding style, remove commented out code, check spacing etc
-'''
 
 # C:\Users\samee\Documents\city-data-small.txt
 # C:\Users\samee\Documents\POP1\pop-one-project-skhan59\city-data.txt
