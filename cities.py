@@ -16,9 +16,8 @@ def read_cities(file_name):
         f.close
         
         return cities_list
-  
     except Exception as e:
-        print('>> ERROR: Unable to find file! Please check location and try again. <<')
+        print('>> ERROR: Please check the file location or ensure file contains 4 items per line. <<')
            
 def print_cities(road_map):
     """
@@ -89,7 +88,6 @@ def find_best_cycle(road_map):
     
     try:    
         while i < 10000:
-        #try:
             attempt_map = shift_cities(best_cycle)
             rand_idx1 = random.randint(0, len(best_cycle)-1)
             rand_idx2 = random.randint(0, len(best_cycle)-1)
