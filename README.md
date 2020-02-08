@@ -1,3 +1,7 @@
+As part of the Msc Data Science program, I had to tackle the classic 'Traveling Salesman Problem'. This repository stores my final implementation, for which I received a 99% overall mark. The full feedback is available in the 'SAMEER KHAN.pdf' document. The problem itself is outlined below. 
+
+------------------------------------------------------------------------------------------------------------------------
+
 # Traveling Salesman
 
 This coursework considers a simplified version of the travelling salesman problem.
