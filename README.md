@@ -1,4 +1,7 @@
-As part of my MSc Data Science program, I had to tackle the classic 'Traveling Salesman Problem'. This repository stores my final implementation (cities.py), for which I received a 99% overall mark. The full feedback is available in the 'SAMEER KHAN.pdf' document. The problem itself is outlined below. 
+As part of my MSc Data Science program, I had to tackle the classic 'Traveling Salesman Problem'. 
+This repository stores my final implementation (cities.py), for which I received a 99% overall mark. The full feedback is available in the 'SAMEER KHAN.pdf' document. 
+It is an approximate algorithm, and visualises the best route in a tkinter window.
+The problem itself is outlined below. 
 
 ------------------------------------------------------------------------------------------------------------------------
 
